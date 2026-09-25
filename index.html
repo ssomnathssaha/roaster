@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +85,26 @@
   .app-header h1 .h1-text{font-size:20px; font-weight:400; letter-spacing:-.3px; color:rgba(255,255,255,.78);}
   .app-header h1 .h1-text b{font-weight:800; color:#fff;}
   .header-row{display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1;}
+  /* Collapsible header: shrinks while scrolling down */
+  .app-header{transition:padding .3s var(--ease-out), box-shadow .3s ease;}
+  .header-row{max-height:40px; overflow:hidden; transition:max-height .3s var(--ease-out), opacity .2s ease, transform .3s var(--ease-out);}
+  .app-header .week-nav, .app-header .db-bar{transition:margin .3s var(--ease-out);}
+  .week-nav button{transition:transform .15s ease, background .15s ease, width .3s var(--ease-out), height .3s var(--ease-out);}
+  .week-label small{display:block; max-height:16px; overflow:hidden; transition:max-height .3s var(--ease-out), opacity .2s ease, margin .3s ease;}
+  .db-status, .db-qbtn{transition:transform .12s ease, background .2s ease, min-height .3s var(--ease-out), height .3s var(--ease-out), padding .3s var(--ease-out);}
+  .db-txt small{max-height:14px; transition:max-height .3s var(--ease-out), opacity .2s ease;}
+  .db-ic{transition:width .3s var(--ease-out), height .3s var(--ease-out);}
+  .app-header.compact{padding-top:calc(8px + var(--safe-t)); padding-bottom:8px; box-shadow:0 8px 24px -10px rgba(30,27,75,.55);}
+  .app-header.compact .header-row{max-height:0; opacity:0; transform:translateY(-8px);}
+  .app-header.compact .week-nav{margin-top:0;}
+  .app-header.compact .week-nav button{width:30px; height:30px;}
+  .app-header.compact .week-label small{max-height:0; opacity:0; margin-top:0;}
+  .app-header.compact .db-bar{margin-top:6px;}
+  .app-header.compact .db-status{min-height:34px; padding:3px 8px;}
+  .app-header.compact .db-qbtn{height:34px; min-height:34px;}
+  .app-header.compact .db-qbtn:not(.db-save):not(.db-exit){width:34px;}
+  .app-header.compact .db-ic{width:24px; height:24px;}
+  .app-header.compact .db-txt small{max-height:0; opacity:0;}
   .week-nav{
     display:flex; align-items:center; gap:8px; margin-top:10px;
     position:relative; z-index:1;
@@ -3502,6 +3523,17 @@
   });
   document.getElementById("resetMonthBtn").addEventListener("click", resetCurrentMonth);
   document.body.classList.add("on-roster");
+  (function(){
+    var hdr = document.querySelector(".app-header"), ticking = false;
+    function upd(){
+      ticking = false;
+      var y = window.scrollY || document.documentElement.scrollTop || 0;
+      // hysteresis avoids flicker when the header height change nudges the scroll position
+      if(!hdr.classList.contains("compact") && y > 70) hdr.classList.add("compact");
+      else if(hdr.classList.contains("compact") && y < 8) hdr.classList.remove("compact");
+    }
+    window.addEventListener("scroll", function(){ if(!ticking){ ticking = true; requestAnimationFrame(upd); } }, { passive:true });
+  })();
   (function(){
     var fab = document.getElementById("autoAssignBtn"), lastY = window.scrollY || 0;
     window.addEventListener("scroll", function(){
