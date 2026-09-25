@@ -22,6 +22,8 @@
     --ok:#16a34a;
     --locum:#0891b2;
     --locum-soft:#e3f6fa;
+    --leave:#16a34a;
+    --leave-soft:#e8f7ee;
     --radius:16px;
     --radius-sm:10px;
     --shadow:0 2px 10px rgba(30,32,60,.06);
@@ -77,11 +79,11 @@
     font-size:21px; font-weight:800; letter-spacing:.3px; margin:0;
     display:flex; align-items:center; justify-content:center; width:100%;
   }
-  .app-header h1 .h1-text{
-    background:linear-gradient(135deg,#fff,rgba(255,255,255,.82));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    text-shadow:0 1px 8px rgba(0,0,0,.12);
-  }
+  .app-header h1.brand{gap:9px;}
+  .brand-mark{width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--primary);
+    background:#fff; box-shadow:0 4px 12px -4px rgba(0,0,0,.35), inset 0 -2px 0 rgba(79,70,229,.12); animation:popIn .5s var(--ease-spring) both;}
+  .app-header h1 .h1-text{font-size:20px; font-weight:400; letter-spacing:-.3px; color:rgba(255,255,255,.78);}
+  .app-header h1 .h1-text b{font-weight:800; color:#fff;}
   .header-row{display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1;}
   .week-nav{
     display:flex; align-items:center; gap:8px; margin-top:10px;
@@ -391,23 +393,38 @@
   .segmented button.selected.locum-selected{color:var(--locum);}
 
   /* ---------- Roster toolbar (view toggle + auto-assign) ---------- */
-  .roster-toolbar{display:flex; align-items:center; gap:8px; padding:12px 2px 2px; flex-wrap:wrap;}
+  .roster-toolbar{
+    display:flex; align-items:center; gap:6px; margin:12px 0 2px; padding:6px;
+    background:rgba(255,255,255,.78); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.9); border-radius:18px;
+    box-shadow:0 10px 26px -16px rgba(40,40,90,.45), 0 1px 0 rgba(255,255,255,.8) inset;
+    animation:fadeInUp .45s var(--ease-out) both;
+  }
   #dayModeWrap, #calendarWrap{
     opacity:0; transform:translateY(8px);
     transition:opacity .28s var(--ease-out), transform .28s var(--ease-out);
   }
   #dayModeWrap.mode-visible, #calendarWrap.mode-visible{opacity:1; transform:translateY(0);}
-  .view-toggle{display:flex; background:var(--card); border-radius:12px; padding:4px; box-shadow:var(--shadow); flex:1;}
-  .view-toggle button{
-    flex:1; border:none; background:none; padding:9px 6px; border-radius:9px; font-size:12.5px;
-    font-weight:700; color:var(--muted); min-height:38px;
-    transition:background .15s ease, color .15s ease;
+  .view-toggle{position:relative; display:grid; grid-template-columns:1fr 1fr; flex:1; min-width:0; background:#eef0f7; border-radius:13px; padding:3px;}
+  .vt-thumb{
+    position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px); border-radius:10px;
+    background:#fff; box-shadow:0 4px 12px -4px rgba(79,70,229,.45), 0 1px 2px rgba(20,20,50,.08);
+    transition:transform .38s var(--ease-spring);
   }
-  .view-toggle button.selected{background:var(--primary); color:#fff;}
+  .view-toggle[data-mode="day"] .vt-thumb{transform:translateX(100%);}
+  .view-toggle button{
+    position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    border:none; background:none; padding:0 6px; border-radius:10px; min-height:40px;
+    font-size:13px; font-weight:800; color:var(--muted); transition:color .25s ease, transform .12s ease;
+  }
+  .view-toggle button svg{transition:transform .35s var(--ease-spring);}
+  .view-toggle button.selected{color:var(--primary);}
+  .view-toggle button.selected svg{transform:scale(1.12) rotate(-4deg);}
+  .view-toggle button:active{transform:scale(.94);}
   .auto-assign-btn{
     position:relative; isolation:isolate; overflow:visible;
     display:flex; align-items:center; gap:4px; color:#fff; border:none; border-radius:12px;
-    padding:0 10px; font-weight:800; font-size:12px; min-height:40px; white-space:nowrap; flex:none;
+    padding:0 13px; font-weight:800; font-size:12.5px; min-height:44px; border-radius:13px; white-space:nowrap; flex:none;
     background:linear-gradient(115deg,#6d28d9,#4f46e5,#0ea5e9,#d946ef,#6d28d9);
     background-size:300% 300%;
     animation:aiGradient 6s ease infinite, aiGlow 2.6s ease-in-out infinite;
@@ -441,11 +458,15 @@
     100%{transform:rotate(0deg) scale(1);}
   }
   .reset-month-btn{
-    display:flex; align-items:center; justify-content:center; background:#fff; color:var(--danger, #dc2626);
-    border:1.5px solid var(--danger, #dc2626); border-radius:12px; padding:0; font-weight:700; font-size:16px;
-    width:44px; height:44px; min-width:44px; flex:0 0 auto; margin-left:auto; transition:transform .12s ease, background .12s ease;
+    display:flex; align-items:center; justify-content:center; width:44px; height:44px; flex:0 0 auto; padding:0;
+    background:transparent; color:#9ca3af; border:none; border-radius:13px;
+    transition:transform .12s ease, background .2s ease, color .2s ease;
   }
-  .reset-month-btn:active{transform:scale(.95); background:#fef2f2;}
+  .reset-month-btn:hover, .reset-month-btn:focus-visible{background:var(--danger-soft); color:var(--danger);}
+  .reset-month-btn:active{transform:scale(.9); background:var(--danger-soft); color:var(--danger);}
+  .reset-month-btn:active svg{animation:binShake .35s ease;}
+  @keyframes binShake{0%,100%{transform:rotate(0);}30%{transform:rotate(-12deg);}60%{transform:rotate(10deg);}}
+  @media (max-width:360px){ .auto-assign-btn .aa-lbl{display:none;} .auto-assign-btn{padding:0 12px;} }
 
   /* ---------- Chip rows (doctor selectors) ---------- */
   .chip-row{display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px; scrollbar-width:none;}
@@ -493,7 +514,7 @@
   .cal-locum{position:absolute; top:3px; right:3px; z-index:2; font-size:9px; line-height:1; padding:2px 3px; border-radius:6px; background:var(--locum); color:#fff; font-weight:800; box-shadow:0 2px 6px -2px rgba(8,145,178,.7); animation:pulseLocum 2.4s ease-in-out infinite;}
   @keyframes pulseLocum{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
   .dv-locum{display:flex; align-items:center; gap:12px; margin:0 0 12px; padding:12px 14px; border-radius:16px;
-    background:linear-gradient(135deg,#ecfeff,#e0f2fe); border:1.5px dashed var(--locum); animation:fadeUp .4s var(--ease-out) both;}
+    background:linear-gradient(135deg,#ecfeff,#e0f2fe); border:1.5px dashed var(--locum); animation:fadeInUp .4s var(--ease-out) both;}
   .dv-locum .ic{width:40px; height:40px; flex:0 0 auto; border-radius:12px; background:var(--locum); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;}
   .dv-locum b{display:block; font-size:14px; color:#0e7490;}
   .dv-locum span{font-size:12px; color:#155e75;}
@@ -529,6 +550,55 @@
   }
   .shift-chip:active{transform:scale(.94);}
   .shift-chip.blocked{background:var(--danger-soft); border-color:var(--danger); color:var(--danger);}
+  .shift-chip small{font-weight:600; opacity:.75; font-size:10.5px;}
+  .shift-chip.leave-chip.on{background:var(--leave-soft); border-color:var(--leave); color:var(--leave);}
+  .av-card{margin-top:12px; background:var(--card); border:1.5px solid var(--border); border-radius:20px; padding:14px; box-shadow:var(--shadow); animation:fadeInUp .35s var(--ease-out) both; transition:border-color .25s ease;}
+  .av-card.av-leave{border-color:var(--leave);} .av-card.av-rest{border-color:var(--danger);} .av-card.av-partial{border-color:#f97316;}
+  .av-head{display:flex; align-items:center; gap:12px;}
+  .av-date{width:50px; height:54px; flex:0 0 auto; border-radius:14px; background:linear-gradient(160deg,var(--primary),#7c3aed); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 16px -8px rgba(79,70,229,.7);}
+  .av-date span{font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; opacity:.85;}
+  .av-date b{font-size:21px; font-weight:800; line-height:1;}
+  .av-who{flex:1; min-width:0;}
+  .av-name{font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .av-sub{font-size:12px; color:var(--muted); font-weight:600;}
+  .av-status{flex:0 0 auto; font-size:11px; font-weight:800; padding:5px 10px; border-radius:999px; background:var(--primary-soft); color:var(--primary);}
+  .av-leave .av-status{background:var(--leave-soft); color:var(--leave);} .av-rest .av-status{background:var(--danger-soft); color:var(--danger);} .av-partial .av-status{background:#fff1e6; color:#c2410c;}
+  .av-sec{margin:16px 2px 8px; font-size:11.5px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.6px;}
+  .av-sec small{text-transform:none; letter-spacing:0; font-weight:600;}
+  .av-opts{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .av-opts.two{grid-template-columns:repeat(2,1fr);}
+  .av-opt{position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; min-height:96px; padding:12px 10px; border-radius:16px; border:1.5px solid var(--border); background:var(--bg); color:var(--text); transition:transform .12s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;}
+  .av-opt:active{transform:scale(.95);}
+  .av-opt .av-ic{font-style:normal; font-size:22px; line-height:1; margin-bottom:4px;}
+  .av-opt b{font-size:13.5px; font-weight:800;}
+  .av-opt small{font-size:10.5px; color:var(--muted); font-weight:600; line-height:1.3;}
+  .av-opt .av-pill{position:absolute; top:8px; right:8px; font-style:normal; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:999px; background:var(--leave); color:#fff;}
+  .av-opt.sel{border-color:var(--c); background:color-mix(in srgb, var(--c) 10%, #fff); box-shadow:0 8px 18px -12px var(--c);}
+  .av-opt.sel b{color:var(--c);}
+  .av-opt.sel::after{content:"✓"; position:absolute; bottom:8px; right:8px; width:20px; height:20px; border-radius:50%; background:var(--c); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; animation:avPop .3s var(--ease-spring) both;}
+  @keyframes avPop{from{transform:scale(0);}to{transform:scale(1);}}
+  .av-impact{margin-top:10px; padding:9px 12px; border-radius:12px; background:var(--bg); font-size:12.5px; font-weight:600; color:var(--muted);}
+  .av-impact b{color:var(--text);}
+  .av-impact span{font-size:11.5px;}
+  .av-impact.on{background:var(--leave-soft); color:#166534;} .av-impact.on b{color:var(--leave);}
+  .av-shifts{display:flex; flex-direction:column; gap:8px; transition:opacity .2s ease;}
+  .av-shifts.muted{opacity:.5;}
+  .av-shift{display:flex; align-items:center; gap:10px; min-height:52px; padding:8px 12px 8px 8px; border-radius:14px; border:1.5px solid var(--border); background:#fff; text-align:left; color:var(--text); transition:border-color .2s ease, background .2s ease, transform .12s ease;}
+  .av-shift:active{transform:scale(.97);}
+  .av-shift .bar{width:5px; align-self:stretch; border-radius:4px;}
+  .av-shift .nm{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .av-shift .nm b{font-size:13.5px;} .av-shift .nm small{font-size:11px; color:var(--muted); font-weight:600;}
+  .av-shift .lab{font-size:11px; font-weight:800; color:var(--ok);}
+  .av-shift .sw{width:42px; height:24px; border-radius:999px; background:#d1d5db; position:relative; flex:0 0 auto; transition:background .2s ease;}
+  .av-shift .sw i{position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .25s var(--ease-spring);}
+  .av-shift.on{border-color:#f97316; background:#fff7ed;}
+  .av-shift.on .lab{color:#c2410c;}
+  .av-shift.on .sw{background:#f97316;} .av-shift.on .sw i{transform:translateX(18px);}
+  .av-note{margin-top:8px; font-size:11.5px; color:var(--muted); font-weight:600; text-align:center;}
+  @media (max-width:380px){ .av-opts{grid-template-columns:1fr;} .av-opt{min-height:0; flex-direction:row; flex-wrap:wrap; align-items:center; gap:4px 8px;} .av-opt small{flex-basis:100%;} }
+  .aa-quota{display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; padding:10px 12px; margin-bottom:10px; border-radius:12px; background:var(--primary-soft); font-size:12.5px; font-weight:700;}
+  .aa-quota b{margin-left:auto; font-size:16px; color:var(--primary);}
+  .aa-quota small{flex-basis:100%; color:var(--muted); font-weight:600; font-size:11.5px;}
   .pref-list{margin-top:14px;}
   .pref-item{
     display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:10px;
@@ -562,6 +632,80 @@
     border:1.5px solid var(--primary); border-radius:10px; background:var(--card); color:var(--text);
     outline:none; box-shadow:0 0 0 3px rgba(79,70,229,.15);
   }
+
+  /* ---------- Staff & Shifts (redesigned) ---------- */
+  .sf-hero{margin-top:14px; border-radius:22px; padding:16px; color:#fff; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#1e1b4b 0%,#4338ca 55%,#0ea5e9 100%); box-shadow:0 14px 30px -14px rgba(30,27,75,.7); animation:fadeInUp .45s var(--ease-out) both;}
+  .sf-hero::after{content:""; position:absolute; width:180px; height:180px; right:-60px; top:-80px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.25), transparent 70%); animation:floatBlob 10s ease-in-out infinite;}
+  .sf-hero h3{margin:0; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; opacity:.8;}
+  .sf-hero .big{font-size:20px; font-weight:800; margin-top:2px;}
+  .sf-hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; position:relative; z-index:1;}
+  .sf-hero-stats div{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); border-radius:14px; padding:9px 6px; text-align:center;}
+  .sf-hero-stats b{display:block; font-size:18px; font-weight:800;}
+  .sf-hero-stats span{font-size:10px; font-weight:700; opacity:.85;}
+  .sf-head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .sf-count{font-size:11.5px; font-weight:800; color:var(--primary); background:var(--primary-soft); padding:4px 10px; border-radius:999px; margin-top:14px;}
+  .sf-card{padding:8px;}
+  .sf-add{display:flex; align-items:center; gap:8px; padding:6px; border-radius:16px; background:var(--bg); border:1.5px solid transparent; transition:border-color .2s ease, background .2s ease;}
+  .sf-add:focus-within{border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px rgba(79,70,229,.1);}
+  .sf-add-av{width:38px; height:38px; flex:0 0 auto; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:var(--primary); background:var(--primary-soft); transition:all .25s var(--ease-spring);}
+  .sf-add-av.typed{color:#fff; background:linear-gradient(135deg,#6366f1,#8b5cf6); transform:rotate(-6deg);}
+  .sf-add input{flex:1; min-width:0; border:none; background:transparent; font-size:15px; font-weight:600; min-height:40px; outline:none; color:var(--text);}
+  .sf-add-btn{min-height:40px; padding:0 16px; border:none; border-radius:12px; font-weight:800; font-size:13.5px; color:#fff; background:var(--primary); transition:opacity .2s ease, transform .12s ease;}
+  .sf-add-btn:disabled{opacity:.35;}
+  .sf-add-btn:not(:disabled):active{transform:scale(.94);}
+  .sf-doc{display:flex; align-items:center; gap:12px; padding:10px 6px; border-radius:14px; transition:background .2s ease;}
+  .sf-doc + .sf-doc{border-top:1px solid var(--border);}
+  .sf-doc .av{width:42px; height:42px; flex:0 0 auto; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:14px; box-shadow:0 6px 14px -8px var(--c); background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 60%,#fff));}
+  .sf-doc .main{flex:1; min-width:0;}
+  .sf-doc .row-name{font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .sf-doc .meta{display:flex; align-items:center; gap:8px; margin-top:4px; font-size:11.5px; font-weight:600; color:var(--muted);}
+  .sf-doc .mini{flex:1; max-width:110px; height:5px; border-radius:4px; background:#eceefa; overflow:hidden;}
+  .sf-doc .mini i{display:block; height:100%; border-radius:4px; background:var(--c); transition:width .6s var(--ease-out);}
+  .sf-ibtn{width:40px; height:40px; flex:0 0 auto; border:none; border-radius:12px; background:transparent; color:#9ca3af; display:flex; align-items:center; justify-content:center; transition:background .2s ease, color .2s ease, transform .12s ease;}
+  .sf-ibtn:active{transform:scale(.88);}
+  .sf-ibtn.edit:hover, .sf-ibtn.edit:active{background:var(--primary-soft); color:var(--primary);}
+  .sf-ibtn.del:hover, .sf-ibtn.del:active{background:var(--danger-soft); color:var(--danger);}
+  .sf-ibtn.save{background:#e8f7ee; color:var(--ok); font-weight:800;}
+  .sf-empty{text-align:center; padding:18px 8px 10px; color:var(--muted); font-size:13px;}
+  .sf-empty .e{font-size:30px; display:block; margin-bottom:4px;}
+  .sf-shift{position:relative; display:flex; gap:12px; align-items:center; padding:14px 12px 14px 16px; margin-top:10px; background:var(--card); border-radius:18px; box-shadow:var(--shadow); overflow:hidden;}
+  .sf-shift::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--c);}
+  .sf-shift .ic{width:44px; height:44px; flex:0 0 auto; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:20px; background:color-mix(in srgb,var(--c) 14%,#fff);}
+  .sf-shift .main{flex:1; min-width:0;}
+  .sf-shift .nm{font-size:15px; font-weight:800; display:flex; align-items:center; gap:6px;}
+  .sf-shift .hrs{font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; background:color-mix(in srgb,var(--c) 14%,#fff); color:var(--c);}
+  .sf-shift .tm{font-size:12px; color:var(--muted); font-weight:600; margin-top:2px;}
+  .sf-track{position:relative; height:8px; border-radius:5px; background:#eef0f6; margin-top:8px; overflow:hidden;}
+  .sf-track i{transform-origin:left; position:absolute; top:0; bottom:0; border-radius:5px; background:var(--c); opacity:.85; animation:dvGrow .6s var(--ease-out) both;}
+  .sf-scale{display:flex; justify-content:space-between; font-size:9px; font-weight:700; color:#b0b4c4; margin-top:3px;}
+  .sf-tags{display:flex; gap:5px; flex-wrap:wrap; margin-top:7px;}
+  .sf-tag{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; background:var(--bg); color:var(--muted);}
+  .sf-tag.locum{background:var(--locum-soft); color:var(--locum);}
+  .sf-tag.shared{background:#d1fae5; color:#065f46;}
+  .sf-shift .acts{display:flex; flex-direction:column; gap:2px; align-self:flex-start;}
+  .sf-new-shift{width:100%; margin-top:10px; min-height:52px; border-radius:18px; border:1.5px dashed #c7cbf5; background:rgba(255,255,255,.6); color:var(--primary); font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .2s ease, transform .12s ease, border-color .2s ease;}
+  .sf-new-shift span{width:26px; height:26px; border-radius:9px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; transition:transform .3s var(--ease-spring);}
+  .sf-new-shift:hover{border-color:var(--primary); background:var(--primary-soft);}
+  .sf-new-shift:hover span{transform:rotate(90deg);}
+  .sf-new-shift:active{transform:scale(.97);}
+  #view-staff .shift-form{margin-top:10px; padding:16px; border-top:none; animation:fadeInUp .35s var(--ease-out) both;}
+  .sf-form-title{font-size:16px; font-weight:800; margin-bottom:10px;}
+  .sf-preview{margin-bottom:14px;}
+  .sf-preview .sf-shift{margin-top:0; box-shadow:none; background:var(--bg);}
+  .sf-switch{display:flex; align-items:center; gap:12px; padding:12px; margin-bottom:8px; border-radius:14px; background:var(--bg); cursor:pointer;}
+  .sf-switch .tx{flex:1; min-width:0;}
+  .sf-switch b{display:block; font-size:13.5px;}
+  .sf-switch small{display:block; font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px; line-height:1.35;}
+  .sf-switch input{position:absolute; opacity:0; pointer-events:none;}
+  .sf-switch i{width:46px; height:28px; flex:0 0 auto; border-radius:999px; background:#d1d5db; position:relative; transition:background .2s ease;}
+  .sf-switch i::after{content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.25); transition:transform .28s var(--ease-spring);}
+  .sf-switch input:checked + i{background:var(--primary);}
+  .sf-switch input:checked + i::after{transform:translateX(18px);}
+  .sf-switch input:focus-visible + i{box-shadow:0 0 0 3px rgba(79,70,229,.3);}
+  #view-staff .palette button{width:38px; height:38px; border-radius:12px; position:relative;}
+  #view-staff .palette button.selected{border-color:#fff; box-shadow:0 0 0 2px var(--text);}
+  #view-staff .palette button.selected::after{content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800;}
 
   .shift-row{display:flex; align-items:center; gap:12px; padding:12px 4px; border-bottom:1px solid var(--border);}
   .shift-row:last-child{border-bottom:none;}
@@ -626,6 +770,9 @@
   .db-qbtn:disabled{opacity:.45;}
   .db-qbtn.editor{background:#fde68a; color:#78350f; border-color:#fde68a;}
   .db-spin{display:inline-block; font-size:20px;}
+  .db-qbtn.db-save{width:auto; padding:0 12px; gap:6px; font-size:13px; background:#fff; color:var(--primary); border-color:#fff; box-shadow:0 6px 16px -6px rgba(0,0,0,.4); animation:popIn .35s var(--ease-spring) both, dbSavePulse 2.2s ease-in-out .4s infinite;}
+  .db-qbtn.db-save[hidden]{display:none;}
+  @keyframes dbSavePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55);} 50%{box-shadow:0 0 0 6px rgba(255,255,255,0);}}
   .db-bar[data-st=ok] .db-dot{background:#4ade80;}
   .db-bar[data-st=busy] .db-dot{background:#60a5fa; animation:dbBlink 1s ease-in-out infinite;}
   .db-bar[data-st=busy] .db-spin{animation:dbSpin 1s linear infinite;}
@@ -884,7 +1031,10 @@
 
   <header class="app-header">
     <div class="header-row">
-      <h1><span class="h1-text">Duty Roster</span></h1>
+      <h1 class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 12.5v5M9.5 15h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+        <span class="h1-text">Duty <b>Roster</b></span>
+      </h1>
     </div>
     <div class="week-nav">
       <button id="prevWeek" aria-label="Previous month">‹</button>
@@ -896,6 +1046,7 @@
         <span class="db-ic"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7.5" ry="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 5.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6M4.5 11.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6" fill="none" stroke="currentColor" stroke-width="2"/></svg><i class="db-dot"></i></span>
         <span class="db-txt"><b id="dbStatusTitle">Database</b><small id="dbStatusSub">Checking…</small></span>
       </button>
+      <button class="db-qbtn db-save" id="dbSaveBtn" aria-label="Save changes to database" title="Save to database" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4h11l3 3v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4z M8 4v5h7V4 M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Save</span></button>
       <button class="db-qbtn" id="dbSyncBtn" aria-label="Sync with database" title="Sync now"><span class="db-spin">⟳</span></button>
       <button class="db-qbtn" id="dbModeBtn" aria-label="Editing mode" title="Editing mode">🔒</button>
     </div>
@@ -905,12 +1056,19 @@
     <!-- ROSTER VIEW -->
     <section class="view active" id="view-roster">
       <div class="roster-toolbar">
-        <div class="view-toggle" id="rosterViewToggle">
-          <button type="button" data-mode="day">📅 Day View</button>
-          <button type="button" class="selected" data-mode="calendar">🗓 Calendar</button>
+        <div class="view-toggle" id="rosterViewToggle" data-mode="calendar" role="tablist" aria-label="Roster view">
+          <span class="vt-thumb" aria-hidden="true"></span>
+          <button type="button" class="selected" data-mode="calendar" role="tab">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="8.5" cy="14.5" r="1.2" fill="currentColor"/><circle cx="12" cy="14.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="14.5" r="1.2" fill="currentColor"/></svg>
+            <span>Month</span></button>
+          <button type="button" data-mode="day" role="tab">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="9" y="12.5" width="6" height="5" rx="1.5" fill="currentColor"/></svg>
+            <span>Day</span></button>
         </div>
-        <button class="auto-assign-btn" id="autoAssignBtn"><span class="spark">✨</span> Auto Assign</button>
-        <button class="reset-month-btn" id="resetMonthBtn" aria-label="Reset this month's roster" title="Reset this month's roster">🗑</button>
+        <button class="auto-assign-btn" id="autoAssignBtn" title="Auto-generate this month's roster"><span class="spark">✨</span><span class="aa-lbl">Auto Assign</span></button>
+        <button class="reset-month-btn" id="resetMonthBtn" aria-label="Reset this month's roster" title="Reset this month's roster">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
 
       <div id="dayModeWrap" style="display:none;">
@@ -934,50 +1092,53 @@
 
     <!-- STAFF & SHIFTS VIEW -->
     <section class="view" id="view-staff">
-      <h2 class="section-title">Staff</h2>
-      <div class="card">
-        <div class="add-row">
-          <input type="text" id="newStaffInput" placeholder="Add doctor name..." maxlength="40">
-          <button class="btn-primary" id="addStaffBtn">Add</button>
+      <div class="sf-hero" id="sfHero"></div>
+
+      <div class="sf-head"><h2 class="section-title">👩‍⚕️ Team</h2><span class="sf-count" id="staffCount"></span></div>
+      <div class="card sf-card">
+        <div class="sf-add">
+          <span class="sf-add-av" id="newStaffAv">+</span>
+          <input type="text" id="newStaffInput" placeholder="Add a doctor, e.g. Dr. Rao" maxlength="40" autocomplete="off" enterkeyhint="done">
+          <button class="sf-add-btn" id="addStaffBtn" disabled aria-label="Add doctor">Add</button>
         </div>
-        <div id="staffListRows" style="margin-top:8px;"></div>
+        <div id="staffListRows"></div>
       </div>
 
-      <h2 class="section-title">Shift Profiles</h2>
-      <div class="card">
-        <div id="shiftListRows"></div>
-        <button class="toggle-form-btn" id="toggleShiftForm">+ Add Shift Profile</button>
-        <div class="shift-form" id="shiftForm" style="display:none;">
+      <div class="sf-head"><h2 class="section-title">🕘 Shift profiles</h2><span class="sf-count" id="shiftCount"></span></div>
+      <div id="shiftListRows"></div>
+      <button class="sf-new-shift" id="toggleShiftForm"><span>＋</span> New shift profile</button>
+      <div class="card shift-form" id="shiftForm" style="display:none;">
+        <div class="sf-form-title" id="shiftFormTitle">New shift profile</div>
+        <div class="sf-preview" id="shiftPreview"></div>
+        <div class="field">
+          <label for="shiftNameInput">Shift name</label>
+          <input type="text" id="shiftNameInput" placeholder="e.g. Day Shift" maxlength="24">
+        </div>
+        <div class="time-row">
           <div class="field">
-            <label>Shift Name</label>
-            <input type="text" id="shiftNameInput" placeholder="e.g. Day Shift" maxlength="24">
-          </div>
-          <div class="time-row">
-            <div class="field">
-              <label>Start Time</label>
-              <input type="time" id="shiftStartInput" value="09:00">
-            </div>
-            <div class="field">
-              <label>End Time</label>
-              <input type="time" id="shiftEndInput" value="17:00">
-            </div>
+            <label for="shiftStartInput">Starts</label>
+            <input type="time" id="shiftStartInput" value="09:00">
           </div>
           <div class="field">
-            <label>Color Badge</label>
-            <div class="palette" id="colorPalette"></div>
+            <label for="shiftEndInput">Ends</label>
+            <input type="time" id="shiftEndInput" value="17:00">
           </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="shiftLocumEligible">
-            <label for="shiftLocumEligible">Available for Locum doctors (night-only)</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="shiftExclusiveInput" checked>
-            <label for="shiftExclusiveInput">Only one doctor per day (e.g. Night/On-call). Uncheck to allow multiple doctors sharing this shift the same day (e.g. Day).</label>
-          </div>
-          <div class="form-actions">
-            <button class="btn-secondary" id="cancelShiftForm">Cancel</button>
-            <button class="btn-primary" id="saveShiftBtn" style="flex:1;">Save Shift</button>
-          </div>
+        </div>
+        <div class="field">
+          <label>Colour</label>
+          <div class="palette" id="colorPalette"></div>
+        </div>
+        <label class="sf-switch" for="shiftExclusiveInput">
+          <span class="tx"><b>👤 One doctor per day</b><small>For Night / 24h / on-call. Turn off to let several doctors share it (e.g. Day).</small></span>
+          <input type="checkbox" id="shiftExclusiveInput" checked><i></i>
+        </label>
+        <label class="sf-switch" for="shiftLocumEligible">
+          <span class="tx"><b>🌙 Locum can take it</b><small>Locum doctors can be booked on this shift.</small></span>
+          <input type="checkbox" id="shiftLocumEligible"><i></i>
+        </label>
+        <div class="form-actions">
+          <button class="btn-secondary" id="cancelShiftForm">Cancel</button>
+          <button class="btn-primary" id="saveShiftBtn" style="flex:1;">Save shift</button>
         </div>
       </div>
 
@@ -1327,9 +1488,9 @@
     if(idx >= 0){
       list.splice(idx, 1);
     } else {
-      if(key === "ALL"){ list = ["ALL"]; }
+      if(key === "ALL" || key === "LEAVE"){ list = [key]; }
       else {
-        list = list.filter(function(k){ return k !== "ALL"; });
+        list = list.filter(function(k){ return k !== "ALL" && k !== "LEAVE"; });
         list.push(key);
       }
     }
@@ -1339,7 +1500,19 @@
   }
   function isBlockedByPreference(staffId, dayIdx, shiftId){
     var list = getPrefsForDay(staffId, dayIdx);
-    return list.indexOf("ALL") >= 0 || list.indexOf(shiftId) >= 0;
+    return list.indexOf("ALL") >= 0 || list.indexOf("LEAVE") >= 0 || list.indexOf(shiftId) >= 0;
+  }
+  // "On leave": no duty that day and 8h less on the doctor's monthly target
+  var LEAVE_HOURS = 8;
+  function isOnLeave(staffId, dayIdx){ return getPrefsForDay(staffId, dayIdx).indexOf("LEAVE") >= 0; }
+  function isRestDay(staffId, dayIdx){ return getPrefsForDay(staffId, dayIdx).indexOf("ALL") >= 0; }
+  function leaveDayCount(staffId){
+    var p = currentPrefs()[staffId] || {};
+    var total = daysInMonth(fromISO(state.currentMonthStart));
+    return Object.keys(p).filter(function(d){ return +d < total && p[d].indexOf("LEAVE") >= 0; }).length;
+  }
+  function targetFor(staffId){
+    return Math.max(0, state.settings.monthlyTargetHours - LEAVE_HOURS * leaveDayCount(staffId));
   }
   function hasAnyPreference(staffId, dayIdx){
     return getPrefsForDay(staffId, dayIdx).length > 0;
@@ -1434,9 +1607,11 @@
         }
       }
       totalHours = Math.round(totalHours*10)/10;
-      var target = state.settings.monthlyTargetHours;
+      var target = targetFor(person.id);
       return {
         person: person,
+        target: target,
+        leaveDays: leaveDayCount(person.id),
         totalHours: totalHours,
         shiftCount: shiftCount,
         over: person.type !== "locum" && totalHours > target,
@@ -1494,6 +1669,7 @@
     var total = daysInMonth(monthStart);
     var today = new Date();
     var wrap = document.getElementById("dayTabs");
+    var keepScroll = wrap.scrollLeft;
     wrap.innerHTML = "";
     for(var idx=0; idx<total; idx++){
       var d = addDays(monthStart, idx);
@@ -1506,11 +1682,21 @@
       })(idx);
       wrap.appendChild(btn);
     }
+    wrap.scrollLeft = keepScroll; // rebuilding resets scroll; restore so the glide starts from where it was
+    scrollActiveTabIntoView();
   }
-  function scrollActiveTabIntoView(){
-    var el = document.querySelector(".day-tab.active");
-    if(el && typeof el.scrollIntoView === "function") el.scrollIntoView({behavior:"smooth", inline:"center", block:"nearest"});
+  // Keep the selected day centred in the strip (the browser clamps at the first/last days of the month).
+  function scrollActiveTabIntoView(instant){
+    var wrap = document.getElementById("dayTabs");
+    var el = wrap && wrap.querySelector(".day-tab.active");
+    if(!el || !wrap.clientWidth) return; // hidden (e.g. Month view): centred again when Day view opens
+    var wr = wrap.getBoundingClientRect(), er = el.getBoundingClientRect();
+    var left = wrap.scrollLeft + (er.left - wr.left) - (wrap.clientWidth - er.width) / 2;
+    left = Math.max(0, Math.min(left, wrap.scrollWidth - wrap.clientWidth));
+    if(typeof wrap.scrollTo === "function") wrap.scrollTo({ left:left, behavior: instant ? "auto" : "smooth" });
+    else wrap.scrollLeft = left;
   }
+  window.addEventListener("resize", function(){ scrollActiveTabIntoView(true); });
 
   // ---------------- Rendering: Roster view ----------------
   function renderRosterList(){
@@ -1663,14 +1849,15 @@
       members.forEach(function(o){
         var st = statById[o.person.id];
         var isLocum = o.person.type === "locum";
-        var pct = isLocum ? Math.min(100, st.shiftCount / state.settings.locumMaxShifts * 100) : Math.min(100, st.totalHours / target * 100);
+        var pct = isLocum ? Math.min(100, st.shiftCount / state.settings.locumMaxShifts * 100) : Math.min(100, st.target ? st.totalHours / st.target * 100 : 100);
         var sub = isLocum ? st.shiftCount + " / " + state.settings.locumMaxShifts + " nights this month"
-                          : st.totalHours + " / " + target + "h this month";
+                          : st.totalHours + " / " + st.target + "h this month";
         var flags = "";
         if(isLocum) flags += "<span class='dv-flag locum'>LOCUM</span>";
         if(st.restIssues.some(function(r){ return r.dayIndex === activeDay || r.dayIndex === activeDay + 1; })) flags += "<span class='dv-flag'>⚠ Short rest</span>";
-        if(!isLocum && st.over) flags += "<span class='dv-flag'>Over " + target + "h</span>";
-        if(hasAnyPreference(o.person.id, activeDay)) flags += "<span class='dv-flag leave'>🌴 Leave requested</span>";
+        if(!isLocum && st.over) flags += "<span class='dv-flag'>Over " + st.target + "h</span>";
+        if(isOnLeave(o.person.id, activeDay)) flags += "<span class='dv-flag leave'>🌴 Marked on leave</span>";
+        else if(hasAnyPreference(o.person.id, activeDay)) flags += "<span class='dv-flag leave'>Preferred to avoid</span>";
         html += "<button class='dv-card stagger-in' data-staff='"+o.person.id+"' style='--accent:"+sh.color+"; animation-delay:"+Math.min(cardIdx++*50,400)+"ms'>" +
           "<div class='avatar'>"+initials(o.person.name)+"</div>" +
           "<div class='dv-card-main'><div class='dv-card-name'>"+escapeHtml(o.person.name)+"</div>" +
@@ -1688,7 +1875,8 @@
       offList.forEach(function(o){
         var leave = hasAnyPreference(o.person.id, activeDay);
         var cls = "dv-off stagger-in" + (o.val === "OFF" ? " is-off" : "") + (leave ? " is-leave" : "");
-        var st = o.val === "OFF" ? "😴 Day off" : (leave ? "🌴 Leave requested" : "＋ Assign shift");
+        var st = isOnLeave(o.person.id, activeDay) ? "🌴 On leave" : o.val === "OFF" ? "😴 Day off" :
+                 isRestDay(o.person.id, activeDay) ? "🛌 Rest day" : (leave ? "Avoiding some shifts" : "＋ Assign shift");
         var prevV = activeDay > 0 ? getAssignment(o.person.id, activeDay-1) : null;
         if(!leave && o.val !== "OFF" && isAssignedShift(prevV) && shiftEndOffset(shiftById(prevV)) > 24) st = "🛏 Post-night rest";
         html += "<button class='"+cls+"' data-staff='"+o.person.id+"' style='animation-delay:"+Math.min(cardIdx++*50,400)+"ms'>" +
@@ -1751,6 +1939,8 @@
       hideEl.style.display = "none";
     }, 280);
 
+    document.getElementById("rosterViewToggle").setAttribute("data-mode", mode);
+    if(mode === "day") scrollActiveTabIntoView(true);
     document.querySelectorAll("#rosterViewToggle button").forEach(function(b){
       b.classList.toggle("selected", b.getAttribute("data-mode") === mode);
     });
@@ -1811,6 +2001,9 @@
           } else {
             cell.innerHTML = "<div class='num'>"+(d+1)+"</div>";
           }
+        } else if(isOnLeave(calendarSelectedStaff, d)){
+          cell.innerHTML = "<div class='num'>"+(d+1)+"</div><div class='lbl'>🌴 Leave</div>";
+          cell.style.background = "var(--leave-soft)";
         } else {
           cell.innerHTML = "<div class='num'>"+(d+1)+"</div>";
         }
@@ -2036,9 +2229,10 @@
       cell.setAttribute("data-day", d);
       var blocked = autoAssignSelectedStaff && hasAnyPreference(autoAssignSelectedStaff, d);
       var isSelectedDay = (autoAssignSelectedDay === d);
-      if(blocked){ cell.classList.add("filled"); cell.style.background = "var(--danger)"; }
+      var lv = blocked && isOnLeave(autoAssignSelectedStaff, d), rs = blocked && isRestDay(autoAssignSelectedStaff, d);
+      if(blocked){ cell.classList.add("filled"); cell.style.background = lv ? "var(--leave)" : rs ? "var(--danger)" : "#f97316"; }
       if(isSelectedDay){ cell.style.boxShadow = "0 0 0 2px var(--primary)"; }
-      cell.innerHTML = "<div class='num'>"+(d+1)+"</div>" + (blocked ? "<div class='lbl'>Leave</div>" : "");
+      cell.innerHTML = "<div class='num'>"+(d+1)+"</div>" + (blocked ? "<div class='lbl'>" + (lv ? "Leave" : rs ? "Rest" : "Avoid") + "</div>" : "");
       cell.addEventListener("click", function(){
         if(!autoAssignSelectedStaff) return;
         autoAssignSelectedDay = parseInt(this.getAttribute("data-day"), 10);
@@ -2054,17 +2248,58 @@
       var person = staffById(autoAssignSelectedStaff);
       var options = person.type === "locum" ? state.shifts.filter(function(s){ return s.locumEligible; }) : state.shifts;
       var currentPrefsList = getPrefsForDay(autoAssignSelectedStaff, autoAssignSelectedDay);
-      var html = "<div class='selected-date-label'>"+DAY_NAMES[d2.getDay()]+", "+fmtShort(d2)+" — mark shifts "+escapeHtml(person.name)+" wants to avoid</div>";
-      html += "<div class='shift-chip-row'>";
-      html += "<button type='button' class='shift-chip"+(currentPrefsList.indexOf("ALL")>=0?" blocked":"")+"' data-key='ALL'>🚫 Whole Day Off</button>";
+      var isLv = currentPrefsList.indexOf("LEAVE") >= 0, isRs = currentPrefsList.indexOf("ALL") >= 0;
+      var avoided = options.filter(function(sh){ return currentPrefsList.indexOf(sh.id) >= 0; });
+      var mode = isLv ? "leave" : isRs ? "rest" : avoided.length ? "partial" : "avail";
+      var statusTxt = { avail:"✅ Available", leave:"🌴 On leave", rest:"🛌 Rest day", partial:"⚠️ Avoiding " + avoided.length + " shift" + (avoided.length===1?"":"s") }[mode];
+      var tgtNow = person.type !== "locum" ? targetFor(person.id) : null;
+      var html = "<div class='av-card av-" + mode + "'>";
+      html += "<div class='av-head'>" +
+        "<div class='av-date'><span>" + DAY_NAMES[d2.getDay()] + "</span><b>" + d2.getDate() + "</b></div>" +
+        "<div class='av-who'><div class='av-name'>" + escapeHtml(person.name) + "</div><div class='av-sub'>" + d2.toLocaleDateString(undefined,{ weekday:"long", day:"numeric", month:"long" }) + "</div></div>" +
+        "<span class='av-status'>" + statusTxt + "</span></div>";
+
+      html += "<div class='av-sec'>Whole day</div><div class='av-opts" + (person.type === "locum" ? " two" : "") + "'>";
+      html += "<button type='button' class='av-opt" + (mode === "avail" ? " sel" : "") + "' data-av='CLEAR' style='--c:var(--primary)'>" +
+        "<i class='av-ic'>✅</i><b>Available</b><small>Can be scheduled normally</small></button>";
+      if(person.type !== "locum"){
+        html += "<button type='button' class='av-opt" + (isLv ? " sel" : "") + "' data-av='LEAVE' style='--c:var(--leave)'>" +
+          "<i class='av-ic'>🌴</i><b>On leave</b><small>No duty · quota reduced</small><em class='av-pill'>−" + LEAVE_HOURS + "h</em></button>";
+      }
+      html += "<button type='button' class='av-opt" + (isRs ? " sel" : "") + "' data-av='ALL' style='--c:var(--danger)'>" +
+        "<i class='av-ic'>🛌</i><b>Rest day</b><small>No duty · quota unchanged</small></button>";
+      html += "</div>";
+
+      if(tgtNow !== null){
+        html += "<div class='av-impact" + (isLv ? " on" : "") + "'>🎯 Monthly target: <b>" + tgtNow + "h</b>" +
+          (isLv ? " <span>(" + (tgtNow + LEAVE_HOURS) + "h − " + LEAVE_HOURS + "h for this leave day)</span>" : " <span>· each leave day removes " + LEAVE_HOURS + "h</span>") + "</div>";
+      }
+
+      html += "<div class='av-sec'>Or avoid specific shifts <small>— still available for the others</small></div><div class='av-shifts" + (isLv || isRs ? " muted" : "") + "'>";
       options.forEach(function(sh){
-        html += "<button type='button' class='shift-chip"+(currentPrefsList.indexOf(sh.id)>=0?" blocked":"")+"' data-key='"+sh.id+"'>"+escapeHtml(sh.name)+"</button>";
+        var on = currentPrefsList.indexOf(sh.id) >= 0;
+        html += "<button type='button' class='av-shift" + (on ? " on" : "") + "' data-av='" + sh.id + "' role='switch' aria-checked='" + on + "'>" +
+          "<span class='bar' style='background:" + sh.color + "'></span>" +
+          "<span class='nm'><b>" + escapeHtml(sh.name) + "</b><small>" + sh.start + " – " + sh.end + " · " + (Math.round(shiftHours(sh)*10)/10) + "h</small></span>" +
+          "<span class='lab'>" + (on ? "Avoid" : "OK") + "</span><span class='sw'><i></i></span></button>";
       });
       html += "</div>";
+      if(isLv || isRs) html += "<div class='av-note'>Whole day is blocked. Tap a shift to switch to avoiding only that shift.</div>";
+      html += "</div>";
       editorWrap.innerHTML = html;
-      editorWrap.querySelectorAll(".shift-chip").forEach(function(btn){
+      editorWrap.querySelectorAll("[data-av]").forEach(function(btn){
         btn.addEventListener("click", function(){
-          togglePreference(autoAssignSelectedStaff, autoAssignSelectedDay, btn.getAttribute("data-key"));
+          var key = btn.getAttribute("data-av");
+          var cur = getPrefsForDay(autoAssignSelectedStaff, autoAssignSelectedDay);
+          if(key === "CLEAR"){
+            var pp = currentPrefs();
+            if(pp[autoAssignSelectedStaff]) delete pp[autoAssignSelectedStaff][autoAssignSelectedDay];
+            saveState();
+          } else if((key === "LEAVE" || key === "ALL") && cur.indexOf(key) >= 0){
+            // already selected: keep it (use "Available" to clear)
+          } else {
+            togglePreference(autoAssignSelectedStaff, autoAssignSelectedDay, key);
+          }
           renderAutoAssignModal();
         });
       });
@@ -2072,19 +2307,26 @@
 
     var prefListWrap = document.getElementById("autoAssignPrefList");
     prefListWrap.innerHTML = "";
+    var selP = autoAssignSelectedStaff ? staffById(autoAssignSelectedStaff) : null;
+    if(selP && selP.type !== "locum"){
+      var lc = leaveDayCount(selP.id);
+      prefListWrap.innerHTML = "<div class='aa-quota'><span>🎯 Monthly target for " + escapeHtml(selP.name) + "</span><b>" + targetFor(selP.id) + "h</b>" +
+        (lc ? "<small>" + state.settings.monthlyTargetHours + "h − " + lc + " leave day" + (lc===1?"":"s") + " × " + LEAVE_HOURS + "h</small>" : "") + "</div>";
+    }
     if(autoAssignSelectedStaff){
       var p2 = currentPrefs()[autoAssignSelectedStaff] || {};
       var dayKeys = Object.keys(p2).map(Number).sort(function(a,b){ return a-b; });
       if(dayKeys.length === 0){
-        prefListWrap.innerHTML = "<p style='color:var(--muted); font-size:12.5px;'>No leave preferences set for this doctor yet. Tap a date above to add one (optional).</p>";
+        prefListWrap.innerHTML += "<p style='color:var(--muted); font-size:12.5px;'>No leave, rest days or preferences set for this doctor yet. Tap a date above to add one (optional).</p>";
       } else {
         dayKeys.forEach(function(dk){
           var dDate = addDays(monthStart, dk);
           var list = p2[dk];
-          var label = list.indexOf("ALL") >= 0 ? "Whole day off" : list.map(function(id){ var s=shiftById(id); return s?s.name:""; }).join(", ");
+          var label = list.indexOf("LEAVE") >= 0 ? "🌴 On leave (−" + LEAVE_HOURS + "h)" : list.indexOf("ALL") >= 0 ? "🛌 Rest day" :
+                      "avoid: " + list.map(function(id){ var s=shiftById(id); return s?s.name:""; }).join(", ");
           var row = document.createElement("div");
           row.className = "pref-item";
-          row.innerHTML = "<span class='pref-txt'>"+fmtShort(dDate)+" — avoid: "+escapeHtml(label)+"</span><button data-day='"+dk+"'>✕</button>";
+          row.innerHTML = "<span class='pref-txt'>"+fmtShort(dDate)+" — "+escapeHtml(label)+"</span><button data-day='"+dk+"'>✕</button>";
           row.querySelector("button").addEventListener("click", function(){
             delete currentPrefs()[autoAssignSelectedStaff][dk];
             saveState();
@@ -2151,6 +2393,8 @@
     Object.keys(roster).forEach(function(sid){ if(!staffById(sid)) delete roster[sid]; });
 
     var regulars = state.staff.filter(function(p){ return p.type === "regular"; });
+    var tgt = {};
+    regulars.forEach(function(p){ tgt[p.id] = targetFor(p.id); });
     var baseLocums = state.staff.filter(function(p){ return p.type === "locum"; });
     // nights already booked with a locum by hand count toward the locum allowance
     var bookedLocumNights = 0;
@@ -2165,7 +2409,7 @@
       var v = grid[pid] ? grid[pid][d] : undefined;
       if(v === "OFF") return true;
       var prefs = getPrefsForDay(pid, d);
-      return prefs.indexOf("ALL") >= 0;
+      return prefs.indexOf("ALL") >= 0 || prefs.indexOf("LEAVE") >= 0;
     }
     function shuffle(arr){
       for(var i=arr.length-1; i>0; i--){ var j = Math.floor(Math.random()*(i+1)); var t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
@@ -2207,7 +2451,7 @@
         if(busy(p.id, d)) return false;
         if(!allowed(p.id, sh)) return false;
         if(isBlockedByPreference(p.id, d, sh.id)) return false;
-        if(p.type === "regular" && hours[p.id] + shiftHours(sh) > target) return false;
+        if(p.type === "regular" && hours[p.id] + shiftHours(sh) > tgt[p.id]) return false;
         if(p.type === "locum"){
           if(!sh.locumEligible) return false;
           if(locumCount[p.id] >= locumMax) return false;
@@ -2242,7 +2486,7 @@
         for(var k=Math.max(0, d-7); k<d; k++){ var v = val(pid, k); if(isAssignedShift(v)) h += shiftHours(shiftById(v)); }
         return h;
       }
-      function pace(d){ return target * (d+1) / total; }
+      function pace(d, pid){ return (pid && tgt[pid] != null ? tgt[pid] : target) * (d+1) / total; }
       function dayShiftCountOn(d){
         var c = 0;
         people.concat(newLocums).forEach(function(p){ var v = val(p.id, d); if(isAssignedShift(v) && !shiftById(v).exclusive) c++; });
@@ -2257,7 +2501,9 @@
         if(!regulars.length) return 0;
         return regulars.reduce(function(a,p){ return a + exclCount[p.id]; }, 0) / regulars.length;
       }
-      function tc(pid, sh){ return (typeCount[pid] && typeCount[pid][sh.id]) || 0; }
+      function rawTc(pid, sh){ return (typeCount[pid] && typeCount[pid][sh.id]) || 0; }
+      // counts are scaled by the doctor's target so doctors on leave get proportionally fewer shifts of each type
+      function tc(pid, sh){ var t = tgt[pid]; return t != null && t > 0 && t < target ? rawTc(pid, sh) * target / t : rawTc(pid, sh); }
       function eligibleRegs(sh){ return regulars.filter(function(p){ return allowed(p.id, sh); }); }
       function avgType(sh){
         var el = eligibleRegs(sh);
@@ -2271,7 +2517,7 @@
         return cands.filter(function(p){ return tc(p.id, sh) <= mn + slack; });
       }
       function score(p, d, sh){
-        var s = (hours[p.id] + shiftHours(sh) - pace(d)) / 8;
+        var s = (hours[p.id] + shiftHours(sh) - pace(d, p.id)) / 8;
         s += recentHours(p.id, d) / 24;
         if(sh.exclusive) s += 1.5 * (exclCount[p.id] - avgExcl()) + 3 * (tc(p.id, sh) - avgType(sh));
         if(gapBefore(p.id, d) >= MAX_GAP) s -= 4;
@@ -2376,7 +2622,7 @@
         shuffle(regulars.slice()).forEach(function(p){
           if(!canTake(p, d, dayShift)) return;
           var mustWork = gapBefore(p.id, d) >= MAX_GAP;
-          var deficit = pace(d) - hours[p.id];
+          var deficit = pace(d, p.id) - hours[p.id];
           var crowd = dayShiftCountOn(d);
           var threshold = 4 + Math.random() * 8 + crowd * 4;
           if(mustWork || deficit >= threshold) put(p, d, dayShift);
@@ -2388,7 +2634,7 @@
       if(dayShift){
         regulars.forEach(function(p){
           var guard = 0;
-          while(target - hours[p.id] >= shiftHours(dayShift) - 0.001 && guard++ < total){
+          while(tgt[p.id] - hours[p.id] >= shiftHours(dayShift) - 0.001 && guard++ < total){
             var bestD = -1, bestV = -Infinity;
             for(var d=0; d<total; d++){
               if(!canTake(p, d, dayShift)) continue;
@@ -2404,7 +2650,7 @@
           }
         });
       }
-      regulars.forEach(function(p){ shortfall += Math.max(0, target - hours[p.id]); });
+      regulars.forEach(function(p){ shortfall += Math.max(0, tgt[p.id] - hours[p.id]); });
 
       // ---- 4. Quality metrics ----
       var gapViol = 0, weekVar = 0;
@@ -2475,26 +2721,68 @@
     if(bestRun.shortfall) issues.push(Math.round(bestRun.shortfall) + "h short of target");
     if(bestRun.gapViol) issues.push(bestRun.gapViol + " day(s) beyond the 2-day gap limit");
     if(bestRun.unsupported) issues.push(bestRun.unsupported + " 24h day(s) without Day support");
-    showToast(msg + (issues.length ? ". Note: " + issues.join(", ") : ". All doctors at " + target + "h.") );
+    var anyLeave = regulars.some(function(p){ return tgt[p.id] !== target; });
+    showToast(msg + (issues.length ? ". Note: " + issues.join(", ") : anyLeave ? ". All doctors at their target (leave adjusted)." : ". All doctors at " + target + "h.") );
   }
 
   // ---------------- Rendering: Staff & Shifts view ----------------
+  var AV_COLORS = ["#6366f1","#ec4899","#f59e0b","#10b981","#0ea5e9","#8b5cf6","#ef4444","#14b8a6"];
+  function avatarColor(name){ var h = 0; for(var i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
+  function shiftIcon(sh){ var h = shiftHours(sh), st = shiftStartHour(sh); return h >= 23 ? "🔁" : (st >= 17 || st < 5) ? "🌙" : st < 12 ? "☀️" : "🌆"; }
+  function shiftCardHtml(sh){
+    var ws = state.shifts.length ? Math.min.apply(null, state.shifts.map(shiftStartHour)) : 9;
+    var off = ((shiftStartHour(sh) - ws) % 24 + 24) % 24, len = Math.min(24, shiftHours(sh));
+    var bars = "<i style='left:" + (off/24*100) + "%; width:" + (Math.min(len, 24-off)/24*100) + "%'></i>";
+    if(off + len > 24) bars += "<i style='left:0; width:" + ((off+len-24)/24*100) + "%'></i>";
+    var hl = function(h){ h = ((Math.round(h) % 24) + 24) % 24; return (h % 12 || 12) + (h < 12 ? "a" : "p"); };
+    return "<div class='ic'>" + shiftIcon(sh) + "</div>" +
+      "<div class='main'><div class='nm'>" + escapeHtml(sh.name || "Untitled shift") + "<span class='hrs'>" + (Math.round(shiftHours(sh)*10)/10) + "h</span></div>" +
+      "<div class='tm'>" + sh.start + " → " + sh.end + (shiftEndOffset(sh) > 24 ? " (next day)" : "") + "</div>" +
+      "<div class='sf-track'>" + bars + "</div>" +
+      "<div class='sf-scale'><span>" + hl(ws) + "</span><span>" + hl(ws+6) + "</span><span>" + hl(ws+12) + "</span><span>" + hl(ws+18) + "</span><span>" + hl(ws) + "</span></div>" +
+      "<div class='sf-tags'>" + (sh.exclusive ? "<span class='sf-tag'>👤 1 doctor / day</span>" : "<span class='sf-tag shared'>👥 Shared</span>") +
+        (sh.locumEligible ? "<span class='sf-tag locum'>🌙 Locum OK</span>" : "") + "</div></div>";
+  }
+  function renderStaffHero(){
+    var regs = state.staff.filter(function(p){ return p.type !== "locum"; }).length;
+    var locs = state.staff.length - regs;
+    document.getElementById("sfHero").innerHTML =
+      "<h3>Setup</h3><div class='big'>Team & shifts</div>" +
+      "<div class='sf-hero-stats'><div><b>" + regs + "</b><span>Doctors</span></div><div><b>" + locs + "</b><span>Locums</span></div><div><b>" + state.shifts.length + "</b><span>Shift types</span></div></div>";
+    document.getElementById("staffCount").textContent = state.staff.length + " " + (state.staff.length === 1 ? "person" : "people");
+    document.getElementById("shiftCount").textContent = state.shifts.length + " profile" + (state.shifts.length === 1 ? "" : "s");
+  }
   function renderStaffList(){
+    renderStaffHero();
     var wrap = document.getElementById("staffListRows");
     wrap.innerHTML = "";
     if(state.staff.length === 0){
-      wrap.innerHTML = "<p style='color:var(--muted); font-size:13.5px; padding:8px 4px;'>No doctors added yet.</p>";
+      wrap.innerHTML = "<div class='sf-empty'><span class='e'>🩺</span>No doctors yet — add your first one above.</div>";
       return;
     }
+    var statMap = {};
+    monthStats().forEach(function(st){ statMap[st.person.id] = st; });
     state.staff.forEach(function(person, idx){
+      var st = statMap[person.id];
+      var isLocum = person.type === "locum";
+      var c = isLocum ? "#0891b2" : avatarColor(person.name);
+      var pct, meta;
+      if(isLocum){
+        pct = st ? Math.min(100, st.shiftCount / state.settings.locumMaxShifts * 100) : 0;
+        meta = "<span class='locum-tag'>LOCUM</span><span>" + (st ? st.shiftCount : 0) + "/" + state.settings.locumMaxShifts + " nights</span>";
+      } else {
+        pct = st && st.target ? Math.min(100, st.totalHours / st.target * 100) : 0;
+        meta = "<span class='mini'><i style='width:" + pct + "%'></i></span><span>" + (st ? st.totalHours : 0) + " / " + (st ? st.target : state.settings.monthlyTargetHours) + "h" + (st && st.leaveDays ? " · 🌴 " + st.leaveDays : "") + "</span>";
+      }
       var row = document.createElement("div");
-      row.className = "list-row stagger-in";
+      row.className = "sf-doc list-row stagger-in";
+      row.style.setProperty("--c", c);
       row.style.animationDelay = Math.min(idx * 40, 320) + "ms";
       row.innerHTML =
-        "<div class='avatar"+(person.type==="locum"?" locum":"")+"' style='width:32px;height:32px;font-size:12px;'>"+initials(person.name)+"</div>" +
-        "<div class='row-name'>"+escapeHtml(person.name)+(person.type==="locum"?" <span class='locum-tag'>LOCUM</span>":"")+"</div>" +
-        "<button class='icon-btn edit edit-name-btn' data-id='"+person.id+"' aria-label='Edit name' title='Edit name'>✎</button>" +
-        "<button class='icon-btn del-staff-btn' data-id='"+person.id+"' aria-label='Remove' title='Remove'>✕</button>";
+        "<div class='av'>" + initials(person.name) + "</div>" +
+        "<div class='main'><div class='row-name'>" + escapeHtml(person.name) + "</div><div class='meta'>" + meta + "</div></div>" +
+        "<button class='sf-ibtn edit edit-name-btn' data-id='" + person.id + "' aria-label='Edit name' title='Edit name'>" + "<svg viewBox=\'0 0 24 24\' width=\'17\' height=\'17\' aria-hidden=\'true\'><path d=\'M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linejoin=\'round\'/><path d=\'M13.5 6.5l4 4\' stroke=\'currentColor\' stroke-width=\'2\'/></svg>" + "</button>" +
+        "<button class='sf-ibtn del del-staff-btn' data-id='" + person.id + "' aria-label='Remove' title='Remove'>" + "<svg viewBox=\'0 0 24 24\' width=\'17\' height=\'17\' aria-hidden=\'true\'><path d=\'M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>" + "</button>";
       wrap.appendChild(row);
     });
     wrap.querySelectorAll(".edit-name-btn").forEach(function(btn){
@@ -2559,24 +2847,22 @@
     var wrap = document.getElementById("shiftListRows");
     wrap.innerHTML = "";
     if(state.shifts.length === 0){
-      wrap.innerHTML = "<p style='color:var(--muted); font-size:13.5px; padding:8px 4px;'>No shift profiles yet.</p>";
+      wrap.innerHTML = "<div class='card sf-empty'><span class='e'>🕘</span>No shift profiles yet — create one below.</div>";
       return;
     }
     state.shifts.forEach(function(sh, idx){
       var row = document.createElement("div");
-      row.className = "shift-row stagger-in";
-      row.style.animationDelay = Math.min(idx * 40, 320) + "ms";
-      row.innerHTML =
-        "<div class='shift-swatch' style='background:"+sh.color+"'></div>" +
-        "<div class='shift-info'><div class='nm'>"+escapeHtml(sh.name)+(sh.locumEligible?" <span class='locum-tag'>LOCUM OK</span>":"")+(sh.exclusive?" <span class='excl-tag'>1/DAY</span>":" <span class='excl-tag shared'>SHARED</span>")+"</div>" +
-        "<div class='tm'>"+sh.start+" – "+sh.end+" · "+(Math.round(shiftHours(sh)*10)/10)+"h</div></div>" +
-        "<div class='shift-actions'>" +
-          "<button class='icon-btn edit' data-id='"+sh.id+"' data-act='edit'>✎</button>" +
-          "<button class='icon-btn' data-id='"+sh.id+"' data-act='del'>✕</button>" +
+      row.className = "sf-shift stagger-in";
+      row.style.setProperty("--c", sh.color);
+      row.style.animationDelay = Math.min(idx * 50, 320) + "ms";
+      row.innerHTML = shiftCardHtml(sh) +
+        "<div class='acts'>" +
+          "<button class='sf-ibtn edit' data-id='"+sh.id+"' data-act='edit' aria-label='Edit shift'><svg viewBox='0 0 24 24' width='17' height='17' aria-hidden='true'><path d='M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z' fill='none' stroke='currentColor' stroke-width='2' stroke-linejoin='round'/><path d='M13.5 6.5l4 4' stroke='currentColor' stroke-width='2'/></svg></button>" +
+          "<button class='sf-ibtn del' data-id='"+sh.id+"' data-act='del' aria-label='Delete shift'><svg viewBox='0 0 24 24' width='17' height='17' aria-hidden='true'><path d='M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg></button>" +
         "</div>";
       wrap.appendChild(row);
     });
-    wrap.querySelectorAll(".icon-btn").forEach(function(btn){
+    wrap.querySelectorAll(".sf-ibtn").forEach(function(btn){
       btn.addEventListener("click", function(){
         var id = btn.getAttribute("data-id");
         var act = btn.getAttribute("data-act");
@@ -2619,6 +2905,7 @@
       b.addEventListener("click", function(){
         wrap.querySelectorAll("button").forEach(function(x){ x.classList.remove("selected"); });
         b.classList.add("selected");
+        updateShiftPreview();
       });
       wrap.appendChild(b);
     });
@@ -2642,7 +2929,8 @@
       document.getElementById("shiftLocumEligible").checked = !!sh.locumEligible;
       document.getElementById("shiftExclusiveInput").checked = !!sh.exclusive;
       renderColorPalette(sh.color);
-      document.getElementById("saveShiftBtn").textContent = "Update Shift";
+      document.getElementById("saveShiftBtn").textContent = "Update shift";
+      document.getElementById("shiftFormTitle").textContent = "Edit “" + sh.name + "”";
     } else {
       document.getElementById("shiftNameInput").value = "";
       document.getElementById("shiftStartInput").value = "09:00";
@@ -2650,13 +2938,33 @@
       document.getElementById("shiftLocumEligible").checked = false;
       document.getElementById("shiftExclusiveInput").checked = true;
       renderColorPalette(PALETTE[state.shifts.length % PALETTE.length]);
-      document.getElementById("saveShiftBtn").textContent = "Save Shift";
+      document.getElementById("saveShiftBtn").textContent = "Save shift";
+      document.getElementById("shiftFormTitle").textContent = "New shift profile";
     }
-    if(typeof form.scrollIntoView === "function") form.scrollIntoView({behavior:"smooth", block:"nearest"});
+    updateShiftPreview();
+    if(typeof form.scrollIntoView === "function") form.scrollIntoView({behavior:"smooth", block:"center"});
   }
+  function updateShiftPreview(){
+    var el = document.getElementById("shiftPreview");
+    if(!el) return;
+    var sh = {
+      name: document.getElementById("shiftNameInput").value.trim(),
+      start: document.getElementById("shiftStartInput").value || "00:00",
+      end: document.getElementById("shiftEndInput").value || "00:00",
+      color: getChosenColor(),
+      locumEligible: document.getElementById("shiftLocumEligible").checked,
+      exclusive: document.getElementById("shiftExclusiveInput").checked
+    };
+    el.innerHTML = "<div class='sf-shift' style='--c:" + sh.color + "'>" + shiftCardHtml(sh) + "</div>";
+  }
+  ["shiftNameInput","shiftStartInput","shiftEndInput","shiftLocumEligible","shiftExclusiveInput"].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener("input", updateShiftPreview);
+    el.addEventListener("change", updateShiftPreview);
+  });
   function closeShiftForm(){
     document.getElementById("shiftForm").style.display = "none";
-    document.getElementById("toggleShiftForm").style.display = "block";
+    document.getElementById("toggleShiftForm").style.display = "";
     editingShiftId = null;
   }
 
@@ -2671,7 +2979,8 @@
     var locums = stats.filter(function(s){ return s.person.type === "locum"; });
     var regHours = regulars.reduce(function(a,s){ return a + s.totalHours; }, 0);
     var totalHours = stats.reduce(function(a,s){ return a + s.totalHours; }, 0);
-    var teamPct = regulars.length ? Math.round(Math.min(100, regHours / (regulars.length * target) * 100)) : 0;
+    var teamTarget = regulars.reduce(function(a,s){ return a + s.target; }, 0);
+    var teamPct = teamTarget ? Math.round(Math.min(100, regHours / teamTarget * 100)) : 0;
     var locumNights = locums.reduce(function(a,s){ return a + s.shiftCount; }, 0);
     var cov = [], fullDays = 0;
     for(var d=0; d<total; d++){ var c = dayCoverage(d); cov.push(c); if(c >= 0.999) fullDays++; }
@@ -2682,8 +2991,8 @@
       var n = escapeHtml(s.person.name);
       if(s.person.type === "locum"){
         if(s.locumOverLimit) alerts.push({ cls:"", ic:"⛔", t:n + " is over the locum limit", m:s.shiftCount + " shifts scheduled · max " + state.settings.locumMaxShifts });
-      } else if(s.over) alerts.push({ cls:"", ic:"🔥", t:n + " is over-allocated", m:s.totalHours + "h scheduled · " + Math.round((s.totalHours - target)*10)/10 + "h above the " + target + "h target" });
-      else if(s.under) alerts.push({ cls:"warn", ic:"⏳", t:n + " needs more hours", m:s.totalHours + "h scheduled · " + Math.round((target - s.totalHours)*10)/10 + "h short of " + target + "h" });
+      } else if(s.over) alerts.push({ cls:"", ic:"🔥", t:n + " is over-allocated", m:s.totalHours + "h scheduled · " + Math.round((s.totalHours - s.target)*10)/10 + "h above the " + s.target + "h target" });
+      else if(s.under) alerts.push({ cls:"warn", ic:"⏳", t:n + " needs more hours", m:s.totalHours + "h scheduled · " + Math.round((s.target - s.totalHours)*10)/10 + "h short of " + s.target + "h" });
       s.restIssues.forEach(function(w){
         alerts.push({ cls:"", ic:"😴", t:n + " · back-to-back shifts", m:"Only " + w.rest + "h rest before day " + (w.dayIndex+1) + " (" + escapeHtml(w.from) + " → " + escapeHtml(w.to) + ")" });
       });
@@ -2700,7 +3009,7 @@
       "<div class='an-hero-top'>" +
         "<div class='an-big-ring' style='--pct:" + teamPct + "'><span>" + teamPct + "%<small>OF TARGET</small></span></div>" +
         "<div style='min-width:0'><h3>Month overview</h3><div class='mo'>" + fmtMonthYear(monthStart) + "</div>" +
-        "<div class='sub'>" + Math.round(regHours*10)/10 + "h of " + (regulars.length * target) + "h scheduled for " + regulars.length + " doctor" + (regulars.length===1?"":"s") + "</div></div>" +
+        "<div class='sub'>" + Math.round(regHours*10)/10 + "h of " + teamTarget + "h scheduled for " + regulars.length + " doctor" + (regulars.length===1?"":"s") + "</div></div>" +
       "</div>" +
       "<div class='an-kpis'>" +
         "<div class='an-kpi" + (gaps ? " bad" : "") + "'><b>" + fullDays + "/" + total + "</b><span>Full days</span></div>" +
@@ -2783,7 +3092,7 @@
         ringColor = s.locumOverLimit ? "var(--danger)" : "var(--locum)";
         badge = s.locumOverLimit ? "<span class='badge danger'>⚠ Over limit</span>" : "<span class='badge locum'>" + s.shiftCount + "/" + state.settings.locumMaxShifts + "</span>";
       } else {
-        pct = Math.min(100, Math.round(s.totalHours / target * 100));
+        pct = s.target ? Math.min(100, Math.round(s.totalHours / s.target * 100)) : 100;
         if(s.over){ ringColor = "var(--danger)"; badge = "<span class='badge danger'>⚠ Over</span>"; }
         else if(s.under){ ringColor = "var(--warn)"; badge = "<span class='badge warn'>Under</span>"; }
         else { ringColor = "var(--ok)"; badge = "<span class='badge ok'>✓ On target</span>"; }
@@ -2810,7 +3119,7 @@
         "<div class='an-doc-top'>" +
           "<div class='avatar-ring' style='--pct:" + pct + "; --ring-color:" + ringColor + ";'><div class='avatar" + (isLocum ? " locum" : "") + "'>" + initials(s.person.name) + "</div></div>" +
           "<div class='an-doc-main'><div class='an-doc-name'>" + escapeHtml(s.person.name) + (isLocum ? " <span class='locum-tag'>LOCUM</span>" : "") + "</div>" +
-          "<div class='an-doc-hrs'><b>" + s.totalHours + "h</b>" + (isLocum ? " · " + s.shiftCount + " night" + (s.shiftCount===1?"":"s") : " / " + target + "h · " + s.shiftCount + " shifts") + "</div></div>" +
+          "<div class='an-doc-hrs'><b>" + s.totalHours + "h</b>" + (isLocum ? " · " + s.shiftCount + " night" + (s.shiftCount===1?"":"s") : " / " + s.target + "h · " + s.shiftCount + " shifts" + (s.leaveDays ? " · 🌴 " + s.leaveDays + " leave day" + (s.leaveDays===1?"":"s") : "")) + "</div></div>" +
           "<div style='text-align:right'>" + badge + "</div>" +
         "</div>" +
         "<div class='hours-bar-bg'><div class='hours-bar " + (s.over || s.locumOverLimit ? "over" : s.under ? "under" : "") + "' style='width:" + pct + "%'></div></div>" +
@@ -2995,6 +3304,15 @@
   document.getElementById("newStaffInput").addEventListener("keydown", function(e){
     if(e.key === "Enter") addStaff();
   });
+  function syncNewStaffUi(){
+    var v = document.getElementById("newStaffInput").value.trim();
+    var av = document.getElementById("newStaffAv");
+    var ini = v.replace(/^dr\.?\s*/i,"").trim() ? initials(v) : "";
+    av.textContent = ini || "+";
+    av.classList.toggle("typed", !!v);
+    document.getElementById("addStaffBtn").disabled = !v;
+  }
+  document.getElementById("newStaffInput").addEventListener("input", syncNewStaffUi);
   function addStaff(){
     var input = document.getElementById("newStaffInput");
     var name = input.value.trim();
@@ -3002,6 +3320,7 @@
     state.staff.push({ id: uid("s"), name: name, type: "regular" });
     saveState();
     input.value = "";
+    syncNewStaffUi();
     renderAll();
     showToast(name + " added");
   }
@@ -3171,8 +3490,8 @@
     if(!sync.url) return { st:"off", title:"Offline mode", sub:"Data is saved on this device only", icon:"📴" };
     if(sync.busy) return { st:"busy", title:sync.busy, sub:"Please wait…", icon:"⏳" };
     if(sync.lastError === "bad_key") return { st:"err", title:"Wrong edit key", sub:"Changes are not being saved", icon:"🔑" };
-    if(sync.lastError) return { st:"err", title:"Can't reach database", sub:(sync.dirty ? "Unsaved changes · will retry" : "Showing data saved on this device"), icon:"⚠️" };
-    if(editor && sync.dirty) return { st:"warn", title:"Changes pending", sub:"Waiting to save…", icon:"⏳" };
+    if(sync.lastError) return { st:"err", title:"Can't reach database", sub:(sync.dirty ? "Unsaved changes · tap Save to retry" : "Showing data saved on this device"), icon:"⚠️" };
+    if(editor && sync.dirty) return { st:"warn", title:"Unsaved changes", sub:"Tap Save to publish to everyone", icon:"💾" };
     if(!editor && sync.pendingLocal) return { st:"warn", title:"View only · not saved", sub:"Your edits are on this device only", icon:"👀" };
     return { st:"ok", title:(editor ? "Synced · Editor" : "Synced · View only"), sub:"Updated " + fmtAgo(sync.lastSyncAt), icon:"✅" };
   }
@@ -3188,6 +3507,9 @@
     mode.title = sync.key ? "Editing enabled — tap to manage" : "View only — tap to unlock editing";
     mode.setAttribute("aria-label", mode.title);
     document.getElementById("dbSyncBtn").disabled = !!sync.busy;
+    var saveBtn = document.getElementById("dbSaveBtn");
+    saveBtn.hidden = !(sync.url && sync.key && sync.dirty);
+    saveBtn.disabled = !!sync.busy;
     if(document.getElementById("dbOverlay").classList.contains("show")) renderDbSheet();
   }
   setInterval(function(){ if(!sync.busy) renderDb(); }, 30000); // refresh "x min ago"
@@ -3232,7 +3554,7 @@
       access.innerHTML = "<h4>Access</h4><div class='db-note'>Connect to the database to view the shared roster or unlock editing.</div>";
     } else if(editor){
       access.innerHTML = "<h4>Editing access</h4>" +
-        "<div class='db-note' style='margin-top:0'>✏️ Editing is <b>unlocked on this device</b>. Every change is saved to the database automatically and everyone sees it.</div>" +
+        "<div class='db-note' style='margin-top:0'>✏️ Editing is <b>unlocked on this device</b>. Your edits stay on this device until you tap <b>Save</b> — then everyone sees them. The roster refreshes from the database about once an hour.</div>" +
         "<button class='btn-secondary' id='dbLockBtn' style='width:100%; margin-top:10px;'>🔒 Lock editing on this device</button>";
       document.getElementById("dbLockBtn").addEventListener("click", dbLock);
     } else {
@@ -3277,8 +3599,6 @@
       return;
     }
     sync.dirty = true; syncSaveMeta(); renderDb();
-    clearTimeout(sync.pushTimer);
-    sync.pushTimer = setTimeout(function(){ dbSave({ overlay:false }); }, 1200);
   }
 
   function applyRemote(data, version, updatedAt){
@@ -3319,9 +3639,11 @@
       if(!res.data){
         sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
         if(sync.key){
-          dbLog("🆕", "Database was empty — uploading this roster");
-          sync.dirty = true;
-          return dbSave({ overlay:opts.overlay, title:"Setting up database" });
+          dbLog("🆕", "Database is empty — tap Save to publish this roster");
+          sync.dirty = true; syncSaveMeta();
+          renderDb();
+          if(opts.overlay) ovSuccess("Connected", "The database is empty. Tap Save to publish this roster to everyone.");
+          return true;
         }
         dbLog("ℹ️", "Database is empty");
         renderDb();
@@ -3330,7 +3652,15 @@
       }
       var changed = res.version !== sync.version;
       if(changed || opts.force){
-        if(!opts.force && sync.key && sync.dirty){ renderDb(); return dbSave({ overlay:opts.overlay }); }
+        if(!opts.force && sync.key && sync.dirty){
+          sync.remoteNewer = true;
+          sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
+          dbLog("ℹ️", "Newer version " + res.version + " in database — kept your unsaved changes");
+          renderDb();
+          if(opts.overlay) ovSuccess("Newer version available", "Someone saved version " + res.version + ". Your unsaved changes are kept — Save will ask how to resolve, or use Reload to discard yours.");
+          else showToast("ℹ️ A newer roster is in the database. Save or Reload when ready.");
+          return true;
+        }
         var hadLocal = sync.pendingLocal;
         applyRemote(res.data, res.version, res.updatedAt);
         if(changed && !opts.overlay && !opts.initial) showToast("🔄 Roster updated from the database" + (hadLocal ? " — your local edits were replaced" : ""));
@@ -3363,7 +3693,7 @@
     opts = opts || {};
     if(!sync.url || !sync.key) return Promise.resolve(false);
     clearTimeout(sync.pushTimer);
-    if(sync.inFlight){ sync.pushTimer = setTimeout(function(){ dbSave(opts); }, 800); return Promise.resolve(false); }
+    if(sync.inFlight){ showToast("Busy — try again in a moment"); return Promise.resolve(false); }
     sync.inFlight = true; sync.busy = "Saving changes…"; renderDb();
     if(opts.overlay) ovShow(opts.title || "Saving to database", "Uploading your changes…");
     var sigAtSend = stateSig();
@@ -3374,24 +3704,30 @@
         sync.version = res.version;
         sync.lastSig = sigAtSend;
         sync.dirty = stateSig() !== sigAtSend;
-        sync.pendingLocal = false;
+        sync.pendingLocal = false; sync.remoteNewer = false;
         sync.lastSyncAt = new Date().toISOString();
         syncSaveMeta();
         dbLog("💾", "Saved version " + res.version);
         renderDb();
         if(opts.overlay) ovSuccess("All changes saved", "Everyone now sees version " + res.version + ".");
         else showToast("✓ Saved to database");
-        if(sync.dirty) sync.pushTimer = setTimeout(function(){ dbSave({ overlay:false }); }, 600);
         return true;
       }
       if(res && res.error === "conflict"){
-        applyRemote(res.data, res.version, res.updatedAt);
         sync.lastError = null;
-        sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
-        dbLog("⚔️", "Conflict — loaded version " + res.version + " from another editor");
+        dbLog("⚔️", "Conflict — version " + res.version + " was saved by another editor");
         renderDb();
-        ovError("Someone else updated the roster", "Another editor saved changes first. The latest version (v" + res.version + ") is now loaded — please redo your last change.", [
-          { label:"OK, got it", cls:"btn-primary" }
+        ovError("Someone else saved first", "Another editor published version " + res.version + " (" + fmtAgo(res.updatedAt) + "). Keep your changes and overwrite theirs, or discard yours and load their version.", [
+          { label:"Load theirs", cls:"btn-secondary", fn:function(){
+            applyRemote(res.data, res.version, res.updatedAt);
+            sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
+            dbLog("⬇️", "Loaded version " + res.version); renderDb();
+            showToast("Loaded version " + res.version);
+          } },
+          { label:"Overwrite with mine", cls:"btn-primary", fn:function(){
+            sync.version = res.version; sync.remoteNewer = false; syncSaveMeta();
+            dbSave({ overlay:true, title:"Saving to database" });
+          } }
         ]);
         return false;
       }
@@ -3409,15 +3745,14 @@
     }).catch(function(err){
       sync.inFlight = false; sync.busy = null;
       sync.lastError = "network";
-      dbLog("⚠️", "Save failed — will retry");
+      dbLog("⚠️", "Save failed");
       renderDb();
       if(opts.overlay){
-        ovError("Changes not saved yet", netErrorText(err) + " Your changes are kept on this device and will be saved automatically when the connection is back.", [
+        ovError("Changes not saved yet", netErrorText(err) + " Your changes are kept on this device — tap Save again when you're back online.", [
           { label:"OK", cls:"btn-secondary" },
           { label:"Retry now", cls:"btn-primary", fn:function(){ dbSave(opts); } }
         ]);
       }
-      sync.pushTimer = setTimeout(function(){ dbSave({ overlay:false }); }, 15000);
       return false;
     });
   }
@@ -3425,7 +3760,6 @@
   // ---- user actions ----
   function dbSyncNow(){
     if(!sync.url){ dbReconnect(); return; }
-    if(sync.key && sync.dirty) { dbSave({ overlay:true, title:"Syncing with database" }); return; }
     if(!sync.key && sync.pendingLocal){ dbReload(); return; }
     dbLoad({ overlay:true, title:"Syncing with database", label:"Syncing…" });
   }
@@ -3469,7 +3803,7 @@
           });
         return;
       }
-      ovSuccess("Editing unlocked", "Your changes will now be saved to the database automatically.");
+      ovSuccess("Editing unlocked", "Make your changes, then tap Save to publish them to everyone.");
       renderDb();
       setTimeout(function(){ dbLoad({ overlay:false, label:"Syncing…" }); }, 50);
     }).catch(function(err){
@@ -3518,19 +3852,26 @@
       });
   }
 
+  var AUTO_READ_MS = 60 * 60 * 1000; // background read at most once an hour
+  function autoReadDue(){
+    var last = sync.lastSyncAt ? new Date(sync.lastSyncAt).getTime() : 0;
+    return Date.now() - last >= AUTO_READ_MS;
+  }
+  function autoRead(){
+    if(!sync.url || ovOpen() || document.visibilityState !== "visible" || !autoReadDue()) return;
+    dbLoad({ overlay:false, label:"Checking for updates…" });
+  }
   function cloudStartPolling(){
     clearInterval(sync.pollTimer);
     if(!sync.url) return;
-    sync.pollTimer = setInterval(function(){
-      if(document.visibilityState === "visible" && !ovOpen()) dbLoad({ overlay:false, label:"Checking for updates…" });
-    }, 30000);
+    sync.pollTimer = setInterval(autoRead, 5 * 60 * 1000);
   }
-  document.addEventListener("visibilitychange", function(){
-    if(document.visibilityState === "visible" && sync.url && !ovOpen()) dbLoad({ overlay:false, label:"Checking for updates…" });
+  document.addEventListener("visibilitychange", autoRead);
+  window.addEventListener("beforeunload", function(e){
+    if(sync.url && sync.key && sync.dirty){ e.preventDefault(); e.returnValue = ""; }
   });
-  window.addEventListener("online", function(){
-    if(!sync.url) return;
-    if(sync.key && sync.dirty) dbSave({ overlay:false }); else dbLoad({ overlay:false });
+  document.getElementById("dbSaveBtn").addEventListener("click", function(){
+    dbSave({ overlay:true, title:"Saving to database" });
   });
 
   document.getElementById("dbStatusBtn").addEventListener("click", function(){ openDbSheet(false); });
@@ -3557,7 +3898,7 @@
     syncLoadCfg();
     renderDb();
     if(!sync.url) return;
-    if(sync.key && sync.dirty){ dbSave({ overlay:true, title:"Saving pending changes" }); }
+    if(sync.key && sync.dirty){ showToast("💾 You have unsaved changes — tap Save to publish them"); }
     else dbLoad({ overlay:true, initial:true, title:"Loading from database", label:"Loading…" });
     cloudStartPolling();
   }
