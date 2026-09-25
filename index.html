@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,8 +123,17 @@
 
   /* ---------- Main content ---------- */
   main{flex:1; padding:6px 14px calc(96px + var(--safe-b));}
-  .view{display:none; animation:fadeIn .22s ease;}
+  .view{display:none;}
   .view.active{display:block;}
+  /* Same smooth staggered entrance for every tab */
+  .view.active > *{animation:fadeInUp .45s var(--ease-out) backwards;}
+  .view.active > *:nth-child(2){animation-delay:50ms;}
+  .view.active > *:nth-child(3){animation-delay:100ms;}
+  .view.active > *:nth-child(4){animation-delay:150ms;}
+  .view.active > *:nth-child(5){animation-delay:200ms;}
+  .view.active > *:nth-child(6){animation-delay:250ms;}
+  .view.active > *:nth-child(n+7){animation-delay:300ms;}
+  @media (prefers-reduced-motion:reduce){ .view.active > *{animation:none;} }
   @keyframes fadeInUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   .stagger-in{animation:fadeInUp .38s var(--ease-out) both;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
@@ -339,7 +347,54 @@
   .sheet-option .swatch{width:16px; height:16px; border-radius:5px; flex:0 0 auto;}
   .sheet-option .meta{margin-left:auto; font-size:12px; color:var(--muted); font-weight:500;}
   .sheet-option.off-option .swatch{background:#cbd1db;}
+  .sheet-option.current{border-color:var(--primary); background:var(--primary-soft); box-shadow:0 0 0 1px var(--primary) inset;}
+  .sheet-option.current::after{content:"✓"; margin-left:8px; color:var(--primary); font-weight:800;}
+  .sheet-divider{display:flex; align-items:center; gap:10px; font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); margin:14px 2px 9px;}
+  .sheet-divider::before, .sheet-divider::after{content:""; flex:1; height:1px; background:var(--border);}
+  .day-opt .dico{width:34px; height:34px; flex:0 0 auto; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; background:var(--bg); color:var(--muted);}
+  .day-opt .dtx{flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.25;}
+  .day-opt .dtx b{font-size:14.5px;}
+  .day-opt .dtx small{font-size:11.5px; color:var(--muted); font-weight:600;}
+  .day-opt .dpill{font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; background:var(--bg); color:var(--muted);}
+  .day-opt.leave .dico, .day-opt.leave .dpill{background:var(--leave-soft); color:var(--leave);}
+  .day-opt.leave.current{border-color:var(--leave); background:var(--leave-soft); box-shadow:0 0 0 1px var(--leave) inset;}
+  .day-opt.leave.current::after{color:var(--leave);}
+  .day-opt.rest .dico{background:#eef2ff;}
   .sheet-note{font-size:12.5px; color:var(--locum); background:var(--locum-soft); padding:9px 11px; border-radius:10px; margin-bottom:12px;}
+  /* ---------- Auto Assign summary ---------- */
+  .aa-sum{max-height:88vh;}
+  .aa-sum-hero{text-align:center; padding:4px 6px 14px;}
+  .aa-sum-check{width:64px; height:64px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; box-shadow:0 10px 24px -8px rgba(22,163,74,.6); animation:popIn .5s var(--ease-spring) both;}
+  .aa-sum-check.warn{background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 10px 24px -8px rgba(217,119,6,.6);}
+  .aa-sum-check svg path{stroke-dasharray:30; stroke-dashoffset:30; animation:aaDraw .5s .25s ease-out forwards;}
+  @keyframes aaDraw{to{stroke-dashoffset:0;}}
+  .aa-sum-hero h3{font-size:19px; font-weight:800; margin:0;}
+  .aa-sum-hero p{font-size:13px; color:var(--muted); margin:3px 0 0;}
+  .aa-sum-kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px;}
+  .aa-sum-kpis div{background:var(--bg); border-radius:14px; padding:9px 4px; text-align:center; animation:fadeInUp .4s var(--ease-out) both;}
+  .aa-sum-kpis b{display:block; font-size:18px; font-weight:800;}
+  .aa-sum-kpis span{font-size:10px; font-weight:700; color:var(--muted);}
+  .aa-sum-kpis .add b{color:var(--ok);} .aa-sum-kpis .chg b{color:var(--primary);} .aa-sum-kpis .rem b{color:var(--danger);} .aa-sum-kpis .loc b{color:var(--locum);}
+  .aa-sum-h{font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); margin:4px 2px 8px;}
+  .aa-sum-doc{display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px; border:1px solid var(--border); margin-bottom:7px; animation:fadeInUp .4s var(--ease-out) both;}
+  .aa-sum-doc .avatar{width:36px; height:36px; font-size:12px; flex:0 0 auto;}
+  .aa-sum-doc .main{flex:1; min-width:0;}
+  .aa-sum-doc .nm{font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .aa-sum-doc .hr{font-size:11.5px; color:var(--muted); font-weight:600; margin-top:1px;}
+  .aa-sum-doc .hr b{color:var(--text);}
+  .aa-sum-bar{height:5px; border-radius:4px; background:#eceefa; margin-top:5px; overflow:hidden;}
+  .aa-sum-bar i{display:block; height:100%; border-radius:4px; background:var(--ok);}
+  .aa-sum-bar i.under{background:var(--warn);} .aa-sum-bar i.over{background:var(--danger);}
+  .aa-sum-mix{display:flex; gap:4px; flex-wrap:wrap; margin-top:5px;}
+  .aa-sum-mix span{font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:999px; color:#fff;}
+  .aa-sum-delta{font-size:12px; font-weight:800; padding:4px 9px; border-radius:999px; background:var(--bg); color:var(--muted); flex:0 0 auto;}
+  .aa-sum-delta.up{background:#e8f7ee; color:var(--ok);} .aa-sum-delta.down{background:var(--danger-soft); color:var(--danger);}
+  .aa-sum-note{display:flex; gap:8px; align-items:flex-start; font-size:12.5px; font-weight:600; padding:9px 11px; border-radius:12px; margin-bottom:6px; background:var(--warn-soft); color:#92400e;}
+  .aa-sum-note.ok{background:#e8f7ee; color:#065f46;}
+  .aa-sum-note.loc{background:var(--locum-soft); color:var(--locum);}
+  .aa-sum-actions button{flex:1;}
+  .aa-sum-actions .btn-primary{flex:2;}
   .sheet-cancel{
     width:100%; padding:13px; border-radius:14px; border:none; background:var(--bg);
     color:var(--muted); font-weight:700; font-size:14px; min-height:48px; margin-top:4px;
@@ -466,7 +521,28 @@
   .reset-month-btn:active{transform:scale(.9); background:var(--danger-soft); color:var(--danger);}
   .reset-month-btn:active svg{animation:binShake .35s ease;}
   @keyframes binShake{0%,100%{transform:rotate(0);}30%{transform:rotate(-12deg);}60%{transform:rotate(10deg);}}
-  @media (max-width:360px){ .auto-assign-btn .aa-lbl{display:none;} .auto-assign-btn{padding:0 12px;} }
+  /* Floating Auto Assign button (Roster tab only) */
+  .aa-fab{
+    position:fixed; z-index:35; right:max(16px, calc(50% - 280px + 16px)); bottom:calc(88px + var(--safe-b));
+    min-height:52px; padding:0 18px 0 16px; border-radius:26px; font-size:14px; gap:7px;
+    transition:transform .3s var(--ease-spring), opacity .25s ease, padding .3s var(--ease-out), gap .3s var(--ease-out);
+  }
+  .aa-fab::before{border-radius:28px;}
+  .aa-fab::after{border-radius:26px;}
+  .aa-fab .spark{font-size:18px;}
+  .aa-fab .aa-lbl{display:inline-block; max-width:120px; overflow:hidden; transition:max-width .3s var(--ease-out), opacity .2s ease;}
+  .aa-fab.mini{padding:0 16px; gap:0;}
+  .aa-fab.mini .aa-lbl{max-width:0; opacity:0;}
+  .aa-fab:active{transform:scale(.92);}
+  body:not(.on-roster) .aa-fab{opacity:0; transform:translateY(24px) scale(.8); pointer-events:none;}
+  .roster-toolbar .view-toggle{flex:1;}
+  body.on-roster main{padding-bottom:calc(150px + var(--safe-b));}
+  /* Reset lives inside the Auto Assign sheet */
+  .aa-danger{display:flex; align-items:center; gap:10px; margin-top:16px; padding:10px 10px 10px 14px; border-radius:14px; border:1px dashed #f3c1c1; background:#fffafa;}
+  .aa-danger .tx{flex:1; min-width:0;}
+  .aa-danger b{display:block; font-size:13px;}
+  .aa-danger small{display:block; font-size:11.5px; color:var(--muted); font-weight:600;}
+  .aa-danger .reset-month-btn{width:auto; gap:6px; padding:0 12px; font-weight:800; font-size:12.5px; color:var(--danger); background:var(--danger-soft);}
 
   /* ---------- Chip rows (doctor selectors) ---------- */
   .chip-row{display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px; scrollbar-width:none;}
@@ -609,7 +685,15 @@
     width:26px; height:26px; border-radius:50%; border:none; background:var(--danger-soft); color:var(--danger); font-weight:700;
   }
   .selected-date-label{font-size:13px; font-weight:700; margin-top:14px; color:var(--text);}
-  .auto-assign-footer{display:flex; gap:10px; margin-top:16px; position:sticky; bottom:0; background:var(--card); padding-top:8px;}
+  /* Docked footer: sticks to the very bottom edge of the sheet (covers its bottom padding) and spans full width */
+  .auto-assign-footer, .aa-sum-actions{
+    display:flex; gap:10px; position:sticky; z-index:5;
+    bottom:calc(-20px - var(--safe-b));
+    margin:16px -18px calc(-20px - var(--safe-b));
+    padding:12px 18px calc(14px + var(--safe-b));
+    background:rgba(255,255,255,.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--border); box-shadow:0 -8px 20px -12px rgba(15,16,30,.18);
+  }
   .auto-assign-footer button{flex:1;}
   .list-row{
     display:flex; align-items:center; gap:10px; padding:11px 4px;
@@ -769,9 +853,16 @@
   .db-qbtn:active{transform:scale(.9);}
   .db-qbtn:disabled{opacity:.45;}
   .db-qbtn.editor{background:#fde68a; color:#78350f; border-color:#fde68a;}
+  .db-edit-ic .lk{transform-origin:18px 18px; transition:transform .3s var(--ease-spring);}
+  .db-qbtn#dbModeBtn:active .db-edit-ic .lk{transform:scale(1.2) rotate(-8deg);}
+  .db-qbtn#dbModeBtn:not(.editor) .db-edit-ic .lk rect{fill:#fde68a;}
+  .db-qbtn#dbModeBtn:not(.editor) .db-edit-ic .lk path{stroke:#fde68a;}
   .db-spin{display:inline-block; font-size:20px;}
   .db-qbtn.db-save{width:auto; padding:0 12px; gap:6px; font-size:13px; background:#fff; color:var(--primary); border-color:#fff; box-shadow:0 6px 16px -6px rgba(0,0,0,.4); animation:popIn .35s var(--ease-spring) both, dbSavePulse 2.2s ease-in-out .4s infinite;}
-  .db-qbtn.db-save[hidden]{display:none;}
+  .db-qbtn.db-save[hidden], .db-qbtn.db-exit[hidden]{display:none;}
+  .db-qbtn.db-exit{width:auto; padding:0 11px; gap:5px; font-size:12.5px; background:rgba(15,16,30,.28); border-color:rgba(255,255,255,.28); animation:popIn .35s var(--ease-spring) both;}
+  .db-qbtn.db-exit:active{background:rgba(15,16,30,.4);}
+  @media (max-width:380px){ .db-qbtn.db-exit span{display:none;} .db-qbtn.db-exit{width:44px; padding:0;} }
   @keyframes dbSavePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55);} 50%{box-shadow:0 0 0 6px rgba(255,255,255,0);}}
   .db-bar[data-st=ok] .db-dot{background:#4ade80;}
   .db-bar[data-st=busy] .db-dot{background:#60a5fa; animation:dbBlink 1s ease-in-out infinite;}
@@ -797,33 +888,63 @@
     transition:transform .35s cubic-bezier(.2,1.3,.4,1);
   }
   .sync-overlay.show .sync-box{transform:none;}
-  .sync-visual{position:relative; width:110px; height:110px; margin:0 auto 14px;}
-  .sync-orbit{position:absolute; inset:0; border-radius:50%; border:2px dashed #dfe2fb; animation:dbSpin 6s linear infinite;}
-  .sync-orbit i{position:absolute; width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#a855f7); box-shadow:0 0 10px rgba(99,102,241,.6);}
-  .sync-orbit i:nth-child(1){top:-6px; left:calc(50% - 6px);}
-  .sync-orbit i:nth-child(2){bottom:10px; left:4px; background:linear-gradient(135deg,#0ea5e9,#22d3ee);}
-  .sync-orbit i:nth-child(3){bottom:10px; right:4px; background:linear-gradient(135deg,#ec4899,#f472b6);}
-  .sync-visual svg{position:absolute; inset:23px; width:64px; height:64px; fill:none; stroke-width:4; stroke-linecap:round; stroke-linejoin:round;}
-  .sync-db{stroke:#4f46e5; animation:dbPulse 1.4s ease-in-out infinite;}
-  .sync-db ellipse{fill:#eef0fe;}
-  @keyframes dbPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.07);}}
-  .sync-check, .sync-cross{opacity:0; transform:scale(.6); transition:opacity .25s ease, transform .4s cubic-bezier(.2,1.4,.4,1);}
+  .sync-visual{position:relative; width:120px; height:120px; margin:0 auto 16px;}
+  .sync-halo{position:absolute; inset:14px; border-radius:50%; background:radial-gradient(circle,rgba(99,102,241,.28),rgba(168,85,247,.12) 55%,transparent 72%); animation:syHalo 2.2s ease-in-out infinite;}
+  @keyframes syHalo{0%,100%{transform:scale(.9); opacity:.7;} 50%{transform:scale(1.15); opacity:1;}}
+  .sync-ring{position:absolute; inset:0; border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0 10%, #6366f1 35%, #a855f7 60%, #ec4899 80%, transparent 95%);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+            mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+    animation:dbSpin 1.1s linear infinite; transition:opacity .3s ease, background .3s ease;}
+  .sync-ring::after{content:""; position:absolute; top:0; left:50%; width:9px; height:9px; margin-left:-4.5px; border-radius:50%; background:#ec4899; box-shadow:0 0 10px 2px rgba(236,72,153,.7);}
+  .sync-bits{position:absolute; inset:0; pointer-events:none;}
+  .sync-bits i{position:absolute; bottom:18px; width:5px; height:5px; border-radius:2px; background:#818cf8; opacity:0; animation:syBit 1.6s ease-in infinite;}
+  .sync-bits i:nth-child(1){left:34%; animation-delay:0s;}
+  .sync-bits i:nth-child(2){left:46%; animation-delay:.35s; background:#c084fc;}
+  .sync-bits i:nth-child(3){left:58%; animation-delay:.7s; background:#f472b6;}
+  .sync-bits i:nth-child(4){left:40%; animation-delay:1.05s; background:#38bdf8;}
+  .sync-bits i:nth-child(5){left:63%; animation-delay:1.3s;}
+  @keyframes syBit{0%{transform:translateY(14px) scale(.6); opacity:0;} 25%{opacity:1;} 100%{transform:translateY(-70px) scale(1); opacity:0;}}
+  .sync-visual svg{position:absolute; inset:28px; width:64px; height:64px; fill:none; stroke-width:4; stroke-linecap:round; stroke-linejoin:round;}
+  .sync-db{stroke:#4f46e5; transition:opacity .25s ease, transform .3s ease;}
+  .sync-db .l0{fill:#eef0fe;}
+  .sync-db path, .sync-db ellipse{animation:syLayer 1.5s ease-in-out infinite; transform-box:fill-box; transform-origin:center;}
+  .sync-db .l3{animation-delay:0s;} .sync-db .l2{animation-delay:.15s;} .sync-db .l1{animation-delay:.3s;} .sync-db .l0{animation-delay:.45s;}
+  @keyframes syLayer{0%,60%,100%{transform:translateY(0); stroke:#4f46e5;} 30%{transform:translateY(-3px); stroke:#a855f7;}}
+  .sync-check, .sync-cross{opacity:0; transform:scale(.6); transition:opacity .25s ease, transform .45s cubic-bezier(.2,1.5,.4,1);}
   .sync-check{stroke:#16a34a;} .sync-check circle{fill:#e8f7ee;}
   .sync-cross{stroke:#ef4444;} .sync-cross circle{fill:#fdecec;}
   .sync-check path{stroke-dasharray:48; stroke-dashoffset:48;}
   .sync-overlay.success .sync-check{opacity:1; transform:none;}
   .sync-overlay.success .sync-check path{animation:dbDraw .5s .15s ease forwards;}
   @keyframes dbDraw{to{stroke-dashoffset:0;}}
-  .sync-overlay.success .sync-db, .sync-overlay.error .sync-db{opacity:0;}
-  .sync-overlay.success .sync-orbit, .sync-overlay.error .sync-orbit{opacity:0; transition:opacity .2s;}
-  .sync-overlay.error .sync-cross{opacity:1; transform:none;}
+  .sync-overlay.success .sync-db, .sync-overlay.error .sync-db{opacity:0; transform:scale(.7);}
+  .sync-overlay.success .sync-ring, .sync-overlay.error .sync-ring,
+  .sync-overlay.success .sync-bits, .sync-overlay.error .sync-bits{opacity:0; transition:opacity .2s;}
+  .sync-overlay.success .sync-halo{background:radial-gradient(circle,rgba(34,197,94,.3),transparent 70%); animation:none; transform:scale(1.2);}
+  .sync-overlay.error .sync-halo{background:radial-gradient(circle,rgba(239,68,68,.22),transparent 70%); animation:none;}
+  .sync-overlay.error .sync-cross{opacity:1; transform:none; animation:syShake .45s .1s ease;}
+  @keyframes syShake{0%,100%{translate:0;} 25%{translate:-6px;} 50%{translate:5px;} 75%{translate:-3px;}}
+  .sync-burst{position:absolute; left:50%; top:50%; width:0; height:0;}
+  .sync-burst i{position:absolute; width:7px; height:7px; margin:-3.5px; border-radius:50%; opacity:0;}
+  .sync-burst i:nth-child(odd){background:#22c55e;} .sync-burst i:nth-child(even){background:#a3e635; width:5px; height:5px; margin:-2.5px;}
+  .sync-overlay.success .sync-burst i{animation:syBurst .7s .1s var(--ease-out) forwards;}
+  .sync-burst i:nth-child(1){--a:0deg;} .sync-burst i:nth-child(2){--a:45deg;} .sync-burst i:nth-child(3){--a:90deg;} .sync-burst i:nth-child(4){--a:135deg;}
+  .sync-burst i:nth-child(5){--a:180deg;} .sync-burst i:nth-child(6){--a:225deg;} .sync-burst i:nth-child(7){--a:270deg;} .sync-burst i:nth-child(8){--a:315deg;}
+  @keyframes syBurst{0%{opacity:1; transform:rotate(var(--a)) translateY(-20px) scale(.4);} 100%{opacity:0; transform:rotate(var(--a)) translateY(-58px) scale(1);}}
   .sync-box h3{font-size:18px; font-weight:800; margin:0 0 6px;}
   .sync-box p{font-size:13.5px; color:var(--muted); line-height:1.45; margin:0;}
-  .sync-progress{height:5px; border-radius:4px; background:#eef0fe; overflow:hidden; margin:16px 0 2px;}
-  .sync-progress i{display:block; height:100%; width:40%; border-radius:4px; background:linear-gradient(90deg,#6366f1,#a855f7,#ec4899); animation:dbBar 1.2s ease-in-out infinite;}
-  @keyframes dbBar{0%{transform:translateX(-100%);} 100%{transform:translateX(260%);}}
-  .sync-overlay.success .sync-progress i{width:100%; animation:none; background:#16a34a; transition:width .3s;}
-  .sync-overlay.error .sync-progress{display:none;}
+  .sync-steps{list-style:none; margin:16px 0 2px; padding:12px 14px; border-radius:16px; background:var(--bg); text-align:left; display:flex; flex-direction:column; gap:9px;}
+  .sync-steps:empty{display:none;}
+  .sync-overlay.error .sync-steps{display:none;}
+  .sync-steps li{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; color:#b0b4c4; transition:color .3s ease;}
+  .sync-steps li b{width:20px; height:20px; flex:0 0 auto; border-radius:50%; border:2px solid #d7dae6; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; transition:all .3s var(--ease-spring);}
+  .sync-steps li.active{color:var(--text);}
+  .sync-steps li.active b{border-color:#6366f1; border-top-color:transparent; animation:dbSpin .8s linear infinite;}
+  .sync-steps li.done{color:var(--text);}
+  .sync-steps li.done b{border-color:#16a34a; background:#16a34a; animation:popIn .35s var(--ease-spring);}
+  .sync-steps li.done b::before{content:"✓";}
+  @media (prefers-reduced-motion:reduce){ .sync-ring, .sync-bits i, .sync-db *, .sync-halo{animation:none !important;} }
   .sync-ov-actions{display:flex; gap:8px; margin-top:14px;}
   .sync-ov-actions:empty{display:none;}
   .sync-ov-actions button{flex:1;}
@@ -974,27 +1095,39 @@
 
   /* ---------- Bottom nav ---------- */
   .bottom-nav{
-    position:fixed; left:0; right:0; bottom:0; z-index:30;
-    max-width:560px; margin:0 auto;
-    background:rgba(255,255,255,.92); backdrop-filter:blur(14px);
-    border-top:1px solid var(--border);
-    display:flex; padding:6px 8px calc(6px + var(--safe-b));
-    box-shadow:0 -2px 14px rgba(20,20,50,.06);
+    position:fixed; left:12px; right:12px; bottom:calc(10px + var(--safe-b)); z-index:30;
+    max-width:420px; margin:0 auto; padding:6px;
+    display:grid; grid-template-columns:repeat(3,1fr);
+    background:rgba(255,255,255,.82); backdrop-filter:blur(18px) saturate(1.6); -webkit-backdrop-filter:blur(18px) saturate(1.6);
+    border:1px solid rgba(255,255,255,.9); border-radius:24px;
+    box-shadow:0 14px 34px -12px rgba(30,27,75,.35), 0 2px 6px rgba(30,27,75,.06), inset 0 1px 0 rgba(255,255,255,.9);
+    animation:fadeInUp .5s var(--ease-out) both;
   }
+  .nav-pill{
+    position:absolute; top:6px; bottom:6px; left:6px; width:calc((100% - 12px) / 3); border-radius:18px;
+    background:linear-gradient(135deg,var(--primary),#7c3aed); box-shadow:0 8px 18px -6px rgba(79,70,229,.6);
+    transition:transform .45s var(--ease-spring);
+  }
+  .bottom-nav[data-active="staff"] .nav-pill{transform:translateX(100%);}
+  .bottom-nav[data-active="analytics"] .nav-pill{transform:translateX(200%);}
   .nav-btn{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
-    background:none; border:none; padding:8px 4px; border-radius:14px; min-height:52px;
-    color:var(--muted); font-size:11px; font-weight:600;
-    transition:color .15s ease, background .15s ease, transform .12s ease;
+    position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    background:none; border:none; padding:6px 4px; border-radius:18px; min-height:54px;
+    color:#8a8fa3; font-size:11px; font-weight:700; letter-spacing:.2px;
+    transition:color .3s ease, transform .15s ease;
   }
-  .nav-btn .ic{font-size:20px; line-height:1; display:inline-block; transition:transform .3s var(--ease-spring);}
-  .nav-btn.active{color:var(--primary); background:var(--primary-soft);}
-  .nav-btn.active .ic{transform:scale(1.15) translateY(-1px);}
-  .nav-btn:active{transform:scale(.93);}
+  .nav-btn .ic{display:flex; transition:transform .45s var(--ease-spring);}
+  .nav-btn .fillme{opacity:0; transition:opacity .3s ease;}
+  .nav-btn .lbl{transition:opacity .2s ease;}
+  .nav-btn.active{color:#fff;}
+  .nav-btn.active .ic{transform:translateY(-1px) scale(1.08);}
+  .nav-btn.active .fillme{opacity:1;}
+  .nav-btn:not(.active):hover{color:var(--primary);}
+  .nav-btn:active{transform:scale(.92);}
 
   /* ---------- Toast ---------- */
   .toast{
-    position:fixed; left:50%; bottom:calc(100px + var(--safe-b)); transform:translateX(-50%) translateY(20px);
+    position:fixed; left:50%; bottom:calc(92px + var(--safe-b)); transform:translateX(-50%) translateY(20px);
     background:#1a1c29; color:#fff; padding:11px 18px; border-radius:30px; font-size:13.5px; font-weight:600;
     box-shadow:var(--shadow-lg); z-index:200; opacity:0; pointer-events:none; transition:all .25s ease;
     max-width:80%; text-align:center;
@@ -1048,7 +1181,8 @@
       </button>
       <button class="db-qbtn db-save" id="dbSaveBtn" aria-label="Save changes to database" title="Save to database" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4h11l3 3v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4z M8 4v5h7V4 M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Save</span></button>
       <button class="db-qbtn" id="dbSyncBtn" aria-label="Sync with database" title="Sync now"><span class="db-spin">⟳</span></button>
-      <button class="db-qbtn" id="dbModeBtn" aria-label="Editing mode" title="Editing mode">🔒</button>
+      <button class="db-qbtn db-exit" id="dbExitBtn" aria-label="Exit edit mode" title="Exit edit mode" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 8l-4 4 4 4M6 12h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button>
+      <button class="db-qbtn" id="dbModeBtn" aria-label="Editing mode" title="Editing mode"></button>
     </div>
   </header>
 
@@ -1065,10 +1199,6 @@
             <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="9" y="12.5" width="6" height="5" rx="1.5" fill="currentColor"/></svg>
             <span>Day</span></button>
         </div>
-        <button class="auto-assign-btn" id="autoAssignBtn" title="Auto-generate this month's roster"><span class="spark">✨</span><span class="aa-lbl">Auto Assign</span></button>
-        <button class="reset-month-btn" id="resetMonthBtn" aria-label="Reset this month's roster" title="Reset this month's roster">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
       </div>
 
       <div id="dayModeWrap" style="display:none;">
@@ -1160,14 +1290,27 @@
     </section>
   </main>
 
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="roster"><span class="ic">📅</span>Roster</button>
-    <button class="nav-btn" data-view="staff"><span class="ic">👥</span>Staff &amp; Shifts</button>
-    <button class="nav-btn" data-view="analytics"><span class="ic">📊</span>Analytics</button>
+  <button class="auto-assign-btn aa-fab" id="autoAssignBtn" title="Auto-generate this month's roster" aria-label="Auto Assign"><span class="spark">✨</span><span class="aa-lbl">Auto Assign</span></button>
+  <nav class="bottom-nav" data-active="roster">
+    <span class="nav-pill" aria-hidden="true"></span>
+    <button class="nav-btn active" data-view="roster" aria-label="Roster"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect class="fillme" x="7.5" y="13" width="4" height="4" rx="1" fill="currentColor"/></svg></span><span class="lbl">Roster</span></button>
+    <button class="nav-btn" data-view="staff" aria-label="Staff and Shifts"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18 14.8c2 .7 3.2 2.4 3.5 5.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="lbl">Team</span></button>
+    <button class="nav-btn" data-view="analytics" aria-label="Analytics"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 20V11M10 20V5M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle class="fillme" cx="20" cy="6" r="2.2" fill="currentColor"/></svg></span><span class="lbl">Insights</span></button>
   </nav>
 </div>
 
 <!-- Bottom sheet for assigning shifts -->
+<div class="sheet-overlay" id="aaSumOverlay">
+  <div class="sheet aa-sum" role="dialog" aria-labelledby="aaSumTitle">
+    <div class="sheet-handle"></div>
+    <div id="aaSumBody"></div>
+    <div class="aa-sum-actions">
+      <button class="btn-secondary" id="aaSumUndo">↶ Undo</button>
+      <button class="btn-primary" id="aaSumDone">View roster</button>
+    </div>
+  </div>
+</div>
+
 <div class="sheet-overlay" id="sheetOverlay">
   <div class="sheet" id="sheet">
     <div class="sheet-handle"></div>
@@ -1209,19 +1352,22 @@
 <div class="sync-overlay" id="syncOverlay" aria-live="polite">
   <div class="sync-box">
     <div class="sync-visual">
-      <div class="sync-orbit"><i></i><i></i><i></i></div>
+      <div class="sync-halo"></div>
+      <div class="sync-ring"></div>
+      <div class="sync-bits"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sync-burst"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <svg class="sync-db" viewBox="0 0 64 64" aria-hidden="true">
-        <ellipse cx="32" cy="14" rx="20" ry="7"/>
-        <path d="M12 14v12c0 3.9 9 7 20 7s20-3.1 20-7V14"/>
-        <path d="M12 26v12c0 3.9 9 7 20 7s20-3.1 20-7V26"/>
-        <path d="M12 38v12c0 3.9 9 7 20 7s20-3.1 20-7V38"/>
+        <path class="l3" d="M12 38v12c0 3.9 9 7 20 7s20-3.1 20-7V38"/>
+        <path class="l2" d="M12 26v12c0 3.9 9 7 20 7s20-3.1 20-7V26"/>
+        <path class="l1" d="M12 14v12c0 3.9 9 7 20 7s20-3.1 20-7V14"/>
+        <ellipse class="l0" cx="32" cy="14" rx="20" ry="7"/>
       </svg>
       <svg class="sync-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M19 33l9 9 17-19"/></svg>
       <svg class="sync-cross" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M22 22l20 20M42 22L22 42"/></svg>
     </div>
     <h3 id="syncOvTitle">Syncing with database</h3>
     <p id="syncOvMsg">Please wait…</p>
-    <div class="sync-progress"><i></i></div>
+    <ol class="sync-steps" id="syncSteps"></ol>
     <div class="sync-ov-actions" id="syncOvActions"></div>
   </div>
 </div>
@@ -1281,6 +1427,14 @@
     <div id="autoAssignDateEditor"></div>
 
     <div class="pref-list" id="autoAssignPrefList"></div>
+
+    <div class="aa-danger">
+      <div class="tx"><b>Start over</b><small>Clears all duties, leave &amp; rest days for this month.</small></div>
+      <button class="reset-month-btn" id="resetMonthBtn" aria-label="Reset this month's roster" title="Reset this month's roster">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Reset month</span>
+      </button>
+    </div>
 
     <div class="auto-assign-footer">
       <button class="btn-secondary" id="autoAssignCancelBtn">Cancel</button>
@@ -1464,6 +1618,7 @@
       delete state.autoAssigned[key];
       if(state.locumNights) delete state.locumNights[key];
       saveState();
+      if(document.getElementById("autoAssignOverlay").classList.contains("show")) closeAutoAssign();
       renderAll();
       showToast(label + " has been reset.");
     });
@@ -1513,6 +1668,14 @@
   }
   function targetFor(staffId){
     return Math.max(0, state.settings.monthlyTargetHours - LEAVE_HOURS * leaveDayCount(staffId));
+  }
+  // Whole-day status set from the manual picker: "LEAVE", "ALL" (rest day) or null (clear)
+  function setDayStatus(staffId, dayIdx, kind){
+    var p = currentPrefs();
+    if(!p[staffId]) p[staffId] = {};
+    var list = (p[staffId][dayIdx] || []).filter(function(k){ return k !== "ALL" && k !== "LEAVE"; });
+    if(kind) list = [kind];
+    if(list.length) p[staffId][dayIdx] = list; else delete p[staffId][dayIdx];
   }
   function hasAnyPreference(staffId, dayIdx){
     return getPrefsForDay(staffId, dayIdx).length > 0;
@@ -1875,8 +2038,8 @@
       offList.forEach(function(o){
         var leave = hasAnyPreference(o.person.id, activeDay);
         var cls = "dv-off stagger-in" + (o.val === "OFF" ? " is-off" : "") + (leave ? " is-leave" : "");
-        var st = isOnLeave(o.person.id, activeDay) ? "🌴 On leave" : o.val === "OFF" ? "😴 Day off" :
-                 isRestDay(o.person.id, activeDay) ? "🛌 Rest day" : (leave ? "Avoiding some shifts" : "＋ Assign shift");
+        var st = isOnLeave(o.person.id, activeDay) ? "🌴 On leave · −8h" : isRestDay(o.person.id, activeDay) ? "🛌 Rest day" :
+                 o.val === "OFF" ? "😴 Day off" : (leave ? "Avoiding some shifts" : "＋ Assign shift");
         var prevV = activeDay > 0 ? getAssignment(o.person.id, activeDay-1) : null;
         if(!leave && o.val !== "OFF" && isAssignedShift(prevV) && shiftEndOffset(shiftById(prevV)) > 24) st = "🛏 Post-night rest";
         html += "<button class='"+cls+"' data-staff='"+o.person.id+"' style='animation-delay:"+Math.min(cardIdx++*50,400)+"ms'>" +
@@ -1989,7 +2152,13 @@
       cell.setAttribute("data-day", d);
       if(calendarSelectedStaff){
         var val = getAssignment(calendarSelectedStaff, d);
-        if(val === "OFF"){
+        if(isOnLeave(calendarSelectedStaff, d)){
+          cell.innerHTML = "<div class='num'>"+(d+1)+"</div><div class='lbl'>🌴 Leave</div>";
+          cell.style.background = "var(--leave-soft)";
+        } else if(isRestDay(calendarSelectedStaff, d) && (!val || val === "OFF")){
+          cell.innerHTML = "<div class='num'>"+(d+1)+"</div><div class='lbl'>Rest</div>";
+          cell.style.background = "#e5e7eb";
+        } else if(val === "OFF"){
           cell.innerHTML = "<div class='num'>"+(d+1)+"</div><div class='lbl'>OFF</div>";
           cell.style.background = "#e5e7eb";
         } else if(val){
@@ -2104,9 +2273,11 @@
       opts.innerHTML = "<p style='color:var(--muted); font-size:13.5px; padding:6px 4px;'>No shift profile is marked as Locum-eligible yet. Edit a shift in Staff &amp; Shifts and enable it for Locum doctors.</p>";
     }
 
+    var curVal = getAssignment(staffId, dayIdx);
+    var curLeave = isOnLeave(staffId, dayIdx), curRest = isRestDay(staffId, dayIdx);
     availableShifts.forEach(function(sh){
       var row = document.createElement("button");
-      row.className = "sheet-option";
+      row.className = "sheet-option" + (curVal === sh.id && !curLeave && !curRest ? " current" : "");
       row.innerHTML =
         "<span class='swatch' style='background:"+sh.color+"'></span>" +
         "<span>"+escapeHtml(sh.name)+"</span>" +
@@ -2119,6 +2290,7 @@
             return;
           }
         }
+        setDayStatus(staffId, dayIdx, null);
         setAssignment(staffId, dayIdx, sh.id);
         closeSheet();
         renderAll();
@@ -2127,26 +2299,34 @@
       opts.appendChild(row);
     });
 
-    var offRow = document.createElement("button");
-    offRow.className = "sheet-option off-option";
-    offRow.innerHTML = "<span class='swatch'></span><span>Day Off</span>";
-    offRow.addEventListener("click", function(){
-      setAssignment(staffId, dayIdx, "OFF");
-      closeSheet();
-      renderAll();
-      showToast(person.name + " marked Day Off");
-    });
-    opts.appendChild(offRow);
+    var head = document.createElement("div");
+    head.className = "sheet-divider";
+    head.textContent = "Whole day";
+    opts.appendChild(head);
 
-    var clearRow = document.createElement("button");
-    clearRow.className = "sheet-option";
-    clearRow.innerHTML = "<span class='swatch' style='background:#f1f2f6'></span><span>Clear / Unassigned</span>";
-    clearRow.addEventListener("click", function(){
-      setAssignment(staffId, dayIdx, null);
-      closeSheet();
-      renderAll();
-    });
-    opts.appendChild(clearRow);
+    function addDayOption(kind, cls, icon, label, desc, pill, toast){
+      var row = document.createElement("button");
+      var isCur = kind === "LEAVE" ? curLeave : kind === "ALL" ? curRest : (!curVal && !curLeave && !curRest);
+      row.className = "sheet-option day-opt " + cls + (isCur ? " current" : "");
+      row.innerHTML = "<span class='dico'>" + icon + "</span>" +
+        "<span class='dtx'><b>" + label + "</b><small>" + desc + "</small></span>" +
+        (pill ? "<span class='dpill'>" + pill + "</span>" : "");
+      row.addEventListener("click", function(){
+        setDayStatus(staffId, dayIdx, kind);
+        setAssignment(staffId, dayIdx, kind ? "OFF" : null);
+        closeSheet();
+        renderAll();
+        if(toast) showToast(toast);
+      });
+      opts.appendChild(row);
+    }
+    if(person.type !== "locum"){
+      var leaveAfter = targetFor(staffId) - (curLeave ? 0 : LEAVE_HOURS);
+      addDayOption("LEAVE", "leave", "🌴", "On leave", "No duty · monthly target becomes " + Math.max(0, leaveAfter) + "h", "−8h",
+        person.name + " on leave · target " + Math.max(0, leaveAfter) + "h");
+    }
+    addDayOption("ALL", "rest", "🛌", "Rest day", "No duty · monthly target unchanged", "0h", person.name + " marked Rest day");
+    addDayOption(null, "clear", "○", "Clear", "Unassigned — Auto Assign may fill it", "", "");
 
     document.getElementById("sheetOverlay").classList.add("show");
   }
@@ -2353,6 +2533,11 @@
     state.settings.locumMaxShifts = lmax; state.settings.locumMinShifts = lmin;
     var monthKey = state.currentMonthStart;
     var total = daysInMonth(fromISO(monthKey));
+    var aaT0 = Date.now();
+    var snapshot = JSON.parse(JSON.stringify({
+      roster: state.rosters[monthKey] || {}, auto: state.autoAssigned[monthKey] || {},
+      locumNights: state.locumNights[monthKey] || [], staff: state.staff
+    }));
     var minRest = state.settings.minRestHours;
     var locumMax = state.settings.locumMaxShifts;
     var locumMin = Math.min(locumMax, state.settings.locumMinShifts || 0);
@@ -2713,17 +2898,89 @@
     saveState();
     closeAutoAssign();
     renderAll();
-    var msg = "Auto-assign complete: " + filled + " shifts";
-    if(bestRun.openCount) msg += ", " + bestRun.openCount + " night(s) left open for a locum";
     var issues = [];
     if(bestRun.unfilled) issues.push(bestRun.unfilled + " extra night(s) uncovered");
     if(bestRun.dayGaps) issues.push(bestRun.dayGaps + " Day shift(s) uncovered");
-    if(bestRun.shortfall) issues.push(Math.round(bestRun.shortfall) + "h short of target");
+    if(bestRun.shortfall) issues.push(Math.round(bestRun.shortfall) + "h short of target in total");
     if(bestRun.gapViol) issues.push(bestRun.gapViol + " day(s) beyond the 2-day gap limit");
     if(bestRun.unsupported) issues.push(bestRun.unsupported + " 24h day(s) without Day support");
-    var anyLeave = regulars.some(function(p){ return tgt[p.id] !== target; });
-    showToast(msg + (issues.length ? ". Note: " + issues.join(", ") : anyLeave ? ". All doctors at their target (leave adjusted)." : ". All doctors at " + target + "h.") );
+    showAutoAssignSummary(snapshot, monthKey, total, filled, bestRun.openCount || 0, issues, Date.now() - aaT0);
   }
+
+  var aaUndoSnap = null;
+  function showAutoAssignSummary(snap, monthKey, total, filled, openCount, issues, ms){
+    var roster = state.rosters[monthKey] || {};
+    var added = 0, changed = 0, removed = 0;
+    var docs = [];
+    state.staff.forEach(function(p){
+      var before = (snap.roster[p.id] || {}), after = (roster[p.id] || {});
+      var hB = 0, hA = 0, mix = {}, touched = 0;
+      for(var d=0; d<total; d++){
+        var b = before[d], a = after[d];
+        var bs = isAssignedShift(b), as = isAssignedShift(a);
+        if(bs) hB += shiftHours(shiftById(b));
+        if(as){ hA += shiftHours(shiftById(a)); mix[a] = (mix[a] || 0) + 1; }
+        if(b === a) continue;
+        if(!bs && as){ added++; touched++; }
+        else if(bs && as){ changed++; touched++; }
+        else if(bs && !as){ removed++; touched++; }
+      }
+      docs.push({ p:p, hB:Math.round(hB*10)/10, hA:Math.round(hA*10)/10, mix:mix, touched:touched });
+    });
+    var ok = issues.length === 0;
+    var monthName = fromISO(monthKey).toLocaleDateString(undefined, { month:"long", year:"numeric" });
+    var html = "<div class='aa-sum-hero'><div class='aa-sum-check" + (ok ? "" : " warn") + "'>" +
+      "<svg viewBox='0 0 24 24' width='32' height='32'><path d='" + (ok ? "M5 12.5l4.5 4.5L19 7.5" : "M12 6v8M12 18h.01") + "' fill='none' stroke='#fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg></div>" +
+      "<h3 id='aaSumTitle'>" + (ok ? "Roster generated!" : "Roster generated with notes") + "</h3>" +
+      "<p>" + monthName + " · " + filled + " shifts auto-assigned in " + (ms < 1000 ? ms + " ms" : (ms/1000).toFixed(1) + " s") + "</p></div>";
+    html += "<div class='aa-sum-kpis'>" +
+      "<div class='add'><b>+" + added + "</b><span>Added</span></div>" +
+      "<div class='chg' style='animation-delay:60ms'><b>" + changed + "</b><span>Changed</span></div>" +
+      "<div class='rem' style='animation-delay:120ms'><b>" + removed + "</b><span>Removed</span></div>" +
+      "<div class='loc' style='animation-delay:180ms'><b>" + openCount + "</b><span>Locum nights</span></div></div>";
+    html += "<div class='aa-sum-h'>Status</div>";
+    if(ok) html += "<div class='aa-sum-note ok'>✅<span>Every doctor is at their monthly target" + (state.staff.some(function(p){ return p.type !== "locum" && targetFor(p.id) !== state.settings.monthlyTargetHours; }) ? " (leave-adjusted)" : "") + ".</span></div>";
+    issues.forEach(function(t){ html += "<div class='aa-sum-note'>⚠️<span>" + escapeHtml(t) + "</span></div>"; });
+    if(openCount) html += "<div class='aa-sum-note loc'>🌙<span>" + openCount + " night(s) left open for a locum — marked 🌙L on the calendar. Tap one to book.</span></div>";
+    if(!added && !changed && !removed) html += "<div class='aa-sum-note ok'>ℹ️<span>No changes — the roster was already optimal.</span></div>";
+    html += "<div class='aa-sum-h' style='margin-top:12px'>Per doctor</div>";
+    docs.forEach(function(o, i){
+      var isLocum = o.p.type === "locum";
+      var tgt = isLocum ? null : targetFor(o.p.id);
+      var delta = Math.round((o.hA - o.hB)*10)/10;
+      var pct = tgt ? Math.min(100, o.hA / tgt * 100) : 0;
+      var barCls = !tgt ? "" : o.hA > tgt + 0.4 ? "over" : o.hA < tgt - 0.4 ? "under" : "";
+      var mixHtml = Object.keys(o.mix).map(function(id){ var sh = shiftById(id); return "<span style='background:" + sh.color + "'>" + escapeHtml(sh.name.replace(/ ?Shift/i, "")) + " ×" + o.mix[id] + "</span>"; }).join("");
+      html += "<div class='aa-sum-doc' style='animation-delay:" + Math.min(i*50, 300) + "ms'>" +
+        "<div class='avatar" + (isLocum ? " locum" : "") + "'>" + initials(o.p.name) + "</div>" +
+        "<div class='main'><div class='nm'>" + escapeHtml(o.p.name) + "</div>" +
+        "<div class='hr'>" + (isLocum ? "Locum · " + locumShiftCount(o.p.id) + "/" + state.settings.locumMaxShifts + " nights" :
+          o.hB + "h → <b>" + o.hA + "h</b> / " + tgt + "h" + (leaveDayCount(o.p.id) ? " · 🌴 " + leaveDayCount(o.p.id) : "")) +
+          (o.touched ? " · " + o.touched + " day" + (o.touched === 1 ? "" : "s") + " changed" : "") + "</div>" +
+        (tgt ? "<div class='aa-sum-bar'><i class='" + barCls + "' style='width:" + pct + "%'></i></div>" : "") +
+        (mixHtml ? "<div class='aa-sum-mix'>" + mixHtml + "</div>" : "") + "</div>" +
+        "<span class='aa-sum-delta " + (delta > 0 ? "up" : delta < 0 ? "down" : "") + "'>" + (delta > 0 ? "+" : "") + delta + "h</span></div>";
+    });
+    document.getElementById("aaSumBody").innerHTML = html;
+    aaUndoSnap = { monthKey: monthKey, snap: snap };
+    document.getElementById("aaSumUndo").disabled = false;
+    document.getElementById("aaSumOverlay").classList.add("show");
+  }
+  function closeAutoAssignSummary(){ document.getElementById("aaSumOverlay").classList.remove("show"); }
+  document.getElementById("aaSumDone").addEventListener("click", closeAutoAssignSummary);
+  document.getElementById("aaSumOverlay").addEventListener("click", function(e){ if(e.target.id === "aaSumOverlay") closeAutoAssignSummary(); });
+  document.getElementById("aaSumUndo").addEventListener("click", function(){
+    if(!aaUndoSnap) return;
+    var u = aaUndoSnap; aaUndoSnap = null;
+    state.rosters[u.monthKey] = u.snap.roster;
+    state.autoAssigned[u.monthKey] = u.snap.auto;
+    state.locumNights[u.monthKey] = u.snap.locumNights;
+    state.staff = u.snap.staff;
+    saveState();
+    closeAutoAssignSummary();
+    renderAll();
+    showToast("↶ Auto Assign undone — previous roster restored");
+  });
 
   // ---------------- Rendering: Staff & Shifts view ----------------
   var AV_COLORS = ["#6366f1","#ec4899","#f59e0b","#10b981","#0ea5e9","#8b5cf6","#ef4444","#14b8a6"];
@@ -3185,8 +3442,10 @@
   // ---------------- View switching ----------------
   function switchView(view){
     activeView = view;
+    document.body.classList.toggle("on-roster", view === "roster");
     document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
     document.getElementById("view-" + view).classList.add("active");
+    document.querySelector(".bottom-nav").setAttribute("data-active", view);
     document.querySelectorAll(".nav-btn").forEach(function(b){
       b.classList.toggle("active", b.getAttribute("data-view") === view);
     });
@@ -3242,6 +3501,16 @@
     ).then(function(ok){ if(ok) openAutoAssign(); });
   });
   document.getElementById("resetMonthBtn").addEventListener("click", resetCurrentMonth);
+  document.body.classList.add("on-roster");
+  (function(){
+    var fab = document.getElementById("autoAssignBtn"), lastY = window.scrollY || 0;
+    window.addEventListener("scroll", function(){
+      var y = window.scrollY || 0;
+      if(Math.abs(y - lastY) < 6) return;
+      fab.classList.toggle("mini", y > lastY && y > 80);
+      lastY = y;
+    }, { passive:true });
+  })();
   document.getElementById("autoAssignCloseBtn").addEventListener("click", closeAutoAssign);
   document.getElementById("autoAssignCancelBtn").addEventListener("click", closeAutoAssign);
   document.getElementById("autoAssignRunBtn").addEventListener("click", runAutoAssign);
@@ -3441,8 +3710,27 @@
 
   // ---- full-screen sync overlay ----
   var ovTimer = null;
+  var ovStepTimers = [];
+  function ovSteps(title){
+    var t = (title || "").toLowerCase();
+    if(/verif|key/.test(t)) return ["Contacting database", "Checking edit key", "Unlocking editing"];
+    if(/sav|publish|upload/.test(t)) return ["Preparing your changes", "Uploading roster", "Confirming save"];
+    return ["Connecting to database", "Fetching latest roster", "Updating your screen"];
+  }
+  function ovSetStep(n){
+    document.querySelectorAll("#syncSteps li").forEach(function(li, i){
+      li.classList.toggle("done", i < n);
+      li.classList.toggle("active", i === n);
+    });
+  }
+  function ovClearSteps(){ ovStepTimers.forEach(clearTimeout); ovStepTimers = []; }
   function ovShow(title, msg){
     clearTimeout(ovTimer);
+    ovClearSteps();
+    document.getElementById("syncSteps").innerHTML = ovSteps(title).map(function(x){ return "<li><b></b><span>" + x + "</span></li>"; }).join("");
+    ovSetStep(0);
+    ovStepTimers.push(setTimeout(function(){ ovSetStep(1); }, 550));
+    ovStepTimers.push(setTimeout(function(){ ovSetStep(2); }, 1500));
     var ov = document.getElementById("syncOverlay");
     ov.classList.remove("success","error");
     document.getElementById("syncOvTitle").textContent = title;
@@ -3454,16 +3742,18 @@
     var ov = document.getElementById("syncOverlay");
     if(!ov.classList.contains("show")) return;
     ov.classList.remove("error");
+    ovClearSteps(); ovSetStep(3);
     ov.classList.add("success");
     document.getElementById("syncOvTitle").textContent = title;
     document.getElementById("syncOvMsg").textContent = msg || "";
     document.getElementById("syncOvActions").innerHTML = "";
     clearTimeout(ovTimer);
-    ovTimer = setTimeout(ovHide, 1400);
+    ovTimer = setTimeout(ovHide, 1600);
   }
   function ovError(title, msg, actions){
     var ov = document.getElementById("syncOverlay");
     clearTimeout(ovTimer);
+    ovClearSteps();
     ov.classList.remove("success");
     ov.classList.add("show","error");
     document.getElementById("syncOvTitle").textContent = title;
@@ -3502,7 +3792,11 @@
     document.getElementById("dbStatusTitle").textContent = s.title;
     document.getElementById("dbStatusSub").textContent = s.sub;
     var mode = document.getElementById("dbModeBtn");
-    mode.textContent = sync.key ? "✏️" : "🔒";
+    var pen = "<path d='M4 20h3.5L17 10.5a2.5 2.5 0 0 0-3.5-3.5L4 16.5V20z' fill='none' stroke='currentColor' stroke-width='2' stroke-linejoin='round'/><path d='M12.5 8l3.5 3.5' stroke='currentColor' stroke-width='2'/>";
+    var lock = sync.key
+      ? "<rect x='14' y='15' width='8' height='6.5' rx='1.6' fill='currentColor'/><path d='M16 15v-2a2 2 0 0 1 3.9-.6' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round'/>"
+      : "<rect x='14' y='15' width='8' height='6.5' rx='1.6' fill='currentColor'/><path d='M15.8 15v-1.8a2.2 2.2 0 0 1 4.4 0V15' fill='none' stroke='currentColor' stroke-width='1.8'/>";
+    mode.innerHTML = "<svg class='db-edit-ic' viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'>" + pen + "<g class='lk'>" + lock + "</g></svg>";
     mode.classList.toggle("editor", !!sync.key);
     mode.title = sync.key ? "Editing enabled — tap to manage" : "View only — tap to unlock editing";
     mode.setAttribute("aria-label", mode.title);
@@ -3510,6 +3804,9 @@
     var saveBtn = document.getElementById("dbSaveBtn");
     saveBtn.hidden = !(sync.url && sync.key && sync.dirty);
     saveBtn.disabled = !!sync.busy;
+    var exitBtn = document.getElementById("dbExitBtn");
+    exitBtn.hidden = !(sync.url && sync.key);
+    exitBtn.disabled = !!sync.busy;
     if(document.getElementById("dbOverlay").classList.contains("show")) renderDbSheet();
   }
   setInterval(function(){ if(!sync.busy) renderDb(); }, 30000); // refresh "x min ago"
@@ -3820,10 +4117,10 @@
       sync.dirty = false; syncSaveMeta();
       dbLog("🔒", "Editing locked on this device");
       renderDb();
-      showToast("🔒 Editing locked — this device is now view-only");
+      showToast("🔒 Exited edit mode — this device is now view-only");
     };
     if(sync.dirty){
-      showConfirm("Save before locking?", "There are changes that haven't reached the database yet.", "Save & lock").then(function(ok){
+      showConfirm("Save before exiting?", "You have changes that haven't been saved to the database yet. Save them and exit edit mode?", "Save & exit").then(function(ok){
         if(!ok) return;
         dbSave({ overlay:true }).then(function(saved){ if(saved) go(); });
       });
@@ -3870,6 +4167,7 @@
   window.addEventListener("beforeunload", function(e){
     if(sync.url && sync.key && sync.dirty){ e.preventDefault(); e.returnValue = ""; }
   });
+  document.getElementById("dbExitBtn").addEventListener("click", dbLock);
   document.getElementById("dbSaveBtn").addEventListener("click", function(){
     dbSave({ overlay:true, title:"Saving to database" });
   });
