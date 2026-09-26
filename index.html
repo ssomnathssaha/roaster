@@ -2,6 +2,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3726RYMPG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R3726RYMPG');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Duty Roster</title>
@@ -874,6 +882,30 @@
   .db-bar[data-st=warn] .db-status, .db-bar[data-st=err] .db-status{background:rgba(251,191,36,.2); border-color:rgba(251,191,36,.5);}
   .db-bar[data-st=err] .db-status{background:rgba(248,113,113,.22); border-color:rgba(248,113,113,.55);}
   @keyframes dbSpin{to{transform:rotate(360deg);}}
+
+  /* ---------- Sync status strip (header) ---------- */
+  .sync-strip{position:relative; z-index:1; display:grid; grid-template-rows:0fr; margin-top:0; opacity:0;
+    transition:grid-template-rows .4s var(--ease-out), margin-top .4s var(--ease-out), opacity .3s ease;}
+  .sync-strip.show{grid-template-rows:1fr; margin-top:8px; opacity:1;}
+  .ss-clip{overflow:hidden; min-height:0;}
+  .ss-body{display:flex; align-items:center; gap:10px; padding:8px 8px 8px 10px; border-radius:14px; min-height:44px;
+    background:#fef3c7; color:#78350f; box-shadow:0 6px 18px -10px rgba(0,0,0,.5); transition:background .3s ease, color .3s ease;}
+  .ss-ic{width:28px; height:28px; flex:0 0 auto; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(120,53,15,.1);}
+  .ss-ic svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .ss-txt{flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.25;}
+  .ss-txt b{font-size:12.5px; font-weight:800;}
+  .ss-txt small{font-size:11px; opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .ss-btn{flex:0 0 auto; min-height:34px; padding:0 12px; border-radius:10px; border:0; background:#78350f; color:#fff; font-size:12px; font-weight:800; transition:transform .12s ease;}
+  .ss-btn:active{transform:scale(.94);}
+  .ss-btn[hidden]{display:none;}
+  .sync-strip[data-st=syncing] .ss-body{background:#e0e7ff; color:#312e81;}
+  .sync-strip[data-st=syncing] .ss-ic{background:rgba(49,46,129,.1);}
+  .sync-strip[data-st=syncing] .ss-ic svg{animation:dbSpin 1s linear infinite;}
+  .sync-strip[data-st=done] .ss-body{background:#dcfce7; color:#14532d;}
+  .sync-strip[data-st=done] .ss-ic{background:#16a34a; color:#fff; animation:popIn .4s var(--ease-spring);}
+  .ss-meter{height:3px; border-radius:3px; background:rgba(120,53,15,.15); margin-top:4px; overflow:hidden;}
+  .ss-meter i{display:block; height:100%; width:100%; background:#b45309; transform-origin:left; transition:transform 1s linear;}
+  .sync-strip:not([data-st=stale]) .ss-meter{display:none;}
   @keyframes dbBlink{0%,100%{opacity:1;} 50%{opacity:.35;}}
 
   /* ---------- Sync overlay ---------- */
@@ -946,6 +978,20 @@
   .sync-steps li.done b{border-color:#16a34a; background:#16a34a; animation:popIn .35s var(--ease-spring);}
   .sync-steps li.done b::before{content:"✓";}
   @media (prefers-reduced-motion:reduce){ .sync-ring, .sync-bits i, .sync-db *, .sync-halo{animation:none !important;} }
+  .sync-device{stroke:#d97706; opacity:0; transform:scale(.6); transition:opacity .25s ease, transform .45s cubic-bezier(.2,1.5,.4,1);}
+  .sync-device .scr{fill:#fef3c7;}
+  .sync-overlay.fallback .sync-cross{opacity:0 !important; animation:none;}
+  .sync-overlay.fallback .sync-device{opacity:1; transform:none;}
+  .sync-overlay.fallback .sync-halo{background:radial-gradient(circle,rgba(245,158,11,.28),transparent 70%);}
+  .sync-ov-info{display:none; margin-top:14px; padding:10px 12px; border-radius:14px; background:var(--bg); text-align:left; flex-direction:column; gap:8px;}
+  .sync-overlay.fallback .sync-ov-info{display:flex;}
+  .sync-ov-info div{display:flex; align-items:center; gap:9px; font-size:12.5px; font-weight:700; color:var(--text);}
+  .sync-ov-info div span{width:22px; height:22px; flex:0 0 auto; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:12px; background:var(--card);}
+  .sync-ov-info small{color:var(--muted); font-weight:600;}
+  .sync-ov-timer{display:none; height:4px; border-radius:4px; background:var(--bg); margin-top:12px; overflow:hidden;}
+  .sync-overlay.fallback .sync-ov-timer{display:block;}
+  .sync-ov-timer i{display:block; height:100%; width:100%; background:#f59e0b; transform-origin:left; transform:scaleX(1);}
+  .sync-overlay.fallback.counting .sync-ov-timer i{transform:scaleX(0); transition:transform var(--fb-ms,4s) linear;}
   .sync-ov-actions{display:flex; gap:8px; margin-top:14px;}
   .sync-ov-actions:empty{display:none;}
   .sync-ov-actions button{flex:1;}
@@ -1185,6 +1231,13 @@
       <button class="db-qbtn db-exit" id="dbExitBtn" aria-label="Exit edit mode" title="Exit edit mode" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 8l-4 4 4 4M6 12h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exit</span></button>
       <button class="db-qbtn" id="dbModeBtn" aria-label="Editing mode" title="Editing mode"></button>
     </div>
+    <div class="sync-strip" id="syncStrip" aria-live="polite">
+      <div class="ss-clip"><div class="ss-body">
+        <span class="ss-ic" id="ssIc"></span>
+        <span class="ss-txt"><b id="ssTitle"></b><small id="ssSub"></small><span class="ss-meter"><i id="ssMeter"></i></span></span>
+        <button type="button" class="ss-btn" id="ssRetryBtn">Retry now</button>
+      </div></div>
+    </div>
   </header>
 
   <main>
@@ -1365,11 +1418,14 @@
       </svg>
       <svg class="sync-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M19 33l9 9 17-19"/></svg>
       <svg class="sync-cross" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M22 22l20 20M42 22L22 42"/></svg>
+      <svg class="sync-device" viewBox="0 0 64 64" aria-hidden="true"><rect x="19" y="8" width="26" height="48" rx="6"/><rect class="scr" x="23" y="14" width="18" height="30" rx="2"/><path d="M29 50h6M27 22h10M27 28h10M27 34h6"/></svg>
     </div>
     <h3 id="syncOvTitle">Syncing with database</h3>
     <p id="syncOvMsg">Please wait…</p>
     <ol class="sync-steps" id="syncSteps"></ol>
+    <div class="sync-ov-info" id="syncOvInfo"></div>
     <div class="sync-ov-actions" id="syncOvActions"></div>
+    <div class="sync-ov-timer"><i></i></div>
   </div>
 </div>
 
@@ -3650,7 +3706,8 @@
   var sync = {
     url:"", key:"", version:0, dirty:false, pendingLocal:false, lastSig:null,
     inFlight:false, applying:false, pushTimer:null, pollTimer:null,
-    busy:null, lastError:null, lastSyncAt:null, remoteUpdatedAt:null, log:[], viewerWarned:false
+    busy:null, lastError:null, lastSyncAt:null, remoteUpdatedAt:null, log:[], viewerWarned:false,
+    stale:false, retryN:0, retryAt:0, retryTotal:0, retryTimer:null, slowTimer:null, fbShown:false, doneTimer:null, doneMsg:null
   };
 
   function syncCfg(){
@@ -3698,10 +3755,14 @@
   }
 
   // ---- network ----
+  var GET_TIMEOUT_MS = 20000;
   function apiGet(){
     if(typeof fetch !== "function") return Promise.reject(new Error("no_fetch"));
-    return fetch(sync.url + (sync.url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(), { method:"GET" })
+    var ctl = typeof AbortController === "function" ? new AbortController() : null;
+    var req = fetch(sync.url + (sync.url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(), ctl ? { method:"GET", signal:ctl.signal } : { method:"GET" })
       .then(function(r){ return r.json(); });
+    var to = new Promise(function(_, rej){ setTimeout(function(){ if(ctl) ctl.abort(); rej(new Error("timeout")); }, GET_TIMEOUT_MS); });
+    return Promise.race([req, to]);
   }
   function apiPost(body){
     if(typeof fetch !== "function") return Promise.reject(new Error("no_fetch"));
@@ -3733,7 +3794,7 @@
     ovStepTimers.push(setTimeout(function(){ ovSetStep(1); }, 550));
     ovStepTimers.push(setTimeout(function(){ ovSetStep(2); }, 1500));
     var ov = document.getElementById("syncOverlay");
-    ov.classList.remove("success","error");
+    ov.classList.remove("success","error","fallback","counting");
     document.getElementById("syncOvTitle").textContent = title;
     document.getElementById("syncOvMsg").textContent = msg || "Please wait…";
     document.getElementById("syncOvActions").innerHTML = "";
@@ -3742,7 +3803,7 @@
   function ovSuccess(title, msg){
     var ov = document.getElementById("syncOverlay");
     if(!ov.classList.contains("show")) return;
-    ov.classList.remove("error");
+    ov.classList.remove("error","fallback","counting");
     ovClearSteps(); ovSetStep(3);
     ov.classList.add("success");
     document.getElementById("syncOvTitle").textContent = title;
@@ -3755,7 +3816,7 @@
     var ov = document.getElementById("syncOverlay");
     clearTimeout(ovTimer);
     ovClearSteps();
-    ov.classList.remove("success");
+    ov.classList.remove("success","fallback","counting");
     ov.classList.add("show","error");
     document.getElementById("syncOvTitle").textContent = title;
     document.getElementById("syncOvMsg").textContent = msg || "";
@@ -3771,7 +3832,32 @@
   }
   function ovHide(){
     clearTimeout(ovTimer);
-    document.getElementById("syncOverlay").classList.remove("show");
+    document.getElementById("syncOverlay").classList.remove("show","counting");
+  }
+  // Initial load couldn't finish: show the saved copy and keep retrying in the background
+  function ovFallback(slow){
+    var ov = document.getElementById("syncOverlay");
+    sync.fbShown = true;
+    clearTimeout(ovTimer);
+    ovClearSteps();
+    ov.classList.remove("success","counting");
+    ov.classList.add("show","error","fallback");
+    document.getElementById("syncOvTitle").textContent = slow ? "Database is slow to respond" : "Couldn't reach the database";
+    document.getElementById("syncOvMsg").textContent = "No problem — you can keep working with the roster saved on this device.";
+    document.getElementById("syncOvInfo").innerHTML =
+      "<div><span>📱</span><p style='margin:0'>Showing your saved copy<br><small>" + (sync.lastSyncAt ? "Last synced " + escapeHtml(fmtAgo(sync.lastSyncAt)) : "Not synced on this device yet") + "</small></p></div>" +
+      "<div><span>🔄</span><p style='margin:0'>" + (slow ? "Still loading in the background" : "Retrying automatically") + "<br><small>The latest roster appears as soon as it arrives</small></p></div>";
+    var wrap = document.getElementById("syncOvActions");
+    wrap.innerHTML = "";
+    var b = document.createElement("button");
+    b.className = "btn-primary"; b.textContent = "Continue with saved copy";
+    b.addEventListener("click", ovHide);
+    wrap.appendChild(b);
+    var ms = 4500;
+    ov.style.setProperty("--fb-ms", ms + "ms");
+    void ov.offsetWidth;
+    requestAnimationFrame(function(){ ov.classList.add("counting"); });
+    ovTimer = setTimeout(ovHide, ms);
   }
   function ovOpen(){ return document.getElementById("syncOverlay").classList.contains("show"); }
 
@@ -3781,7 +3867,7 @@
     if(!sync.url) return { st:"off", title:"Offline mode", sub:"Data is saved on this device only", icon:"📴" };
     if(sync.busy) return { st:"busy", title:sync.busy, sub:"Please wait…", icon:"⏳" };
     if(sync.lastError === "bad_key") return { st:"err", title:"Wrong edit key", sub:"Changes are not being saved", icon:"🔑" };
-    if(sync.lastError) return { st:"err", title:"Can't reach database", sub:(sync.dirty ? "Unsaved changes · tap Save to retry" : "Showing data saved on this device"), icon:"⚠️" };
+    if(sync.lastError) return { st:"err", title:(sync.stale ? "Using saved copy" : "Can't reach database"), sub:(sync.dirty ? "Unsaved changes · tap Save to retry" : (sync.stale ? "Retrying automatically · synced " + fmtAgo(sync.lastSyncAt) : "Showing data saved on this device")), icon:"⚠️" };
     if(editor && sync.dirty) return { st:"warn", title:"Unsaved changes", sub:"Tap Save to publish to everyone", icon:"💾" };
     if(!editor && sync.pendingLocal) return { st:"warn", title:"View only · not saved", sub:"Your edits are on this device only", icon:"👀" };
     return { st:"ok", title:(editor ? "Synced · Editor" : "Synced · View only"), sub:"Updated " + fmtAgo(sync.lastSyncAt), icon:"✅" };
@@ -3809,7 +3895,87 @@
     exitBtn.hidden = !(sync.url && sync.key);
     exitBtn.disabled = !!sync.busy;
     if(document.getElementById("dbOverlay").classList.contains("show")) renderDbSheet();
+    renderStrip();
   }
+
+  // ---- sync status strip + background retry ----
+  var RETRY_STEPS = [5, 10, 20, 30, 60];
+  var SS_ICONS = {
+    stale: "<svg viewBox='0 0 24 24'><rect x='7' y='2.5' width='10' height='19' rx='2.5'/><path d='M11 18.5h2'/></svg>",
+    syncing: "<svg viewBox='0 0 24 24'><path d='M20 12a8 8 0 1 1-2.34-5.66'/><path d='M20 4v4.5h-4.5'/></svg>",
+    done: "<svg viewBox='0 0 24 24'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>"
+  };
+  function renderStrip(){
+    var el = document.getElementById("syncStrip");
+    var st = null, title = "", sub = "", showBtn = false;
+    if(sync.url && sync.stale){
+      if(sync.inFlight){
+        st = "syncing"; title = "Getting the latest roster…";
+        sub = "Your saved copy is shown until it arrives";
+      } else {
+        st = "stale"; title = "Showing saved copy · not the latest";
+        var when = sync.lastSyncAt ? "Synced " + fmtAgo(sync.lastSyncAt) : "Never synced";
+        if(navigator.onLine === false) sub = when + " · waiting for internet";
+        else {
+          var left = Math.max(0, Math.ceil((sync.retryAt - Date.now()) / 1000));
+          sub = when + " · retrying " + (left > 0 ? "in " + left + "s" : "now");
+        }
+        showBtn = true;
+      }
+    } else if(sync.doneMsg){
+      st = "done"; title = sync.doneMsg.title; sub = sync.doneMsg.sub;
+    }
+    el.classList.toggle("show", !!st);
+    if(!st) return;
+    if(el.getAttribute("data-st") !== st){
+      el.setAttribute("data-st", st);
+      document.getElementById("ssIc").innerHTML = SS_ICONS[st];
+    }
+    document.getElementById("ssTitle").textContent = title;
+    document.getElementById("ssSub").textContent = sub;
+    document.getElementById("ssRetryBtn").hidden = !showBtn;
+    var m = document.getElementById("ssMeter");
+    if(st === "stale" && sync.retryTotal){
+      var frac = Math.max(0, Math.min(1, (sync.retryAt - Date.now()) / sync.retryTotal));
+      m.style.transform = "scaleX(" + (1 - frac).toFixed(3) + ")";
+    }
+  }
+  function markStale(){
+    clearTimeout(sync.doneTimer); sync.doneMsg = null;
+    sync.stale = true;
+  }
+  function scheduleRetry(){
+    clearTimeout(sync.retryTimer);
+    if(!sync.url || !sync.stale) return;
+    var secs = RETRY_STEPS[Math.min(sync.retryN, RETRY_STEPS.length - 1)];
+    sync.retryN++;
+    sync.retryTotal = secs * 1000;
+    sync.retryAt = Date.now() + sync.retryTotal;
+    sync.retryTimer = setTimeout(retryNow, sync.retryTotal);
+    renderStrip();
+  }
+  function retryNow(){
+    clearTimeout(sync.retryTimer);
+    if(!sync.url || !sync.stale) return;
+    if(sync.inFlight){ scheduleRetry(); return; }
+    if(navigator.onLine === false){ sync.retryAt = 0; renderStrip(); return; } // resumes on "online"
+    dbLoad({ overlay:false, retry:true, label:"Getting latest data…" });
+  }
+  function staleResolved(changed, version, hadLocal){
+    var was = sync.stale;
+    sync.stale = false; sync.retryN = 0; sync.retryAt = 0;
+    clearTimeout(sync.retryTimer);
+    if(!was) return;
+    sync.doneMsg = changed
+      ? { title:"You're up to date", sub:"Latest roster loaded (v" + version + ")" + (hadLocal ? " · your local edits were replaced" : "") }
+      : { title:"You're up to date", sub:"Your saved copy already matched the database" };
+    clearTimeout(sync.doneTimer);
+    sync.doneTimer = setTimeout(function(){ sync.doneMsg = null; renderStrip(); }, 4500);
+  }
+  document.getElementById("ssRetryBtn").addEventListener("click", function(){ sync.retryN = 0; retryNow(); });
+  window.addEventListener("online", function(){ if(sync.stale){ sync.retryN = 0; retryNow(); } });
+  window.addEventListener("offline", renderStrip);
+  setInterval(function(){ if(sync.stale && !sync.inFlight) renderStrip(); }, 1000);
   setInterval(function(){ if(!sync.busy) renderDb(); }, 30000); // refresh "x min ago"
 
   function renderDbSheet(){
@@ -3927,10 +4093,20 @@
     opts = opts || {};
     if(!sync.url) return Promise.resolve(false);
     if(sync.inFlight){ return Promise.resolve(false); }
-    sync.inFlight = true; sync.busy = opts.label || "Loading roster…"; renderDb();
+    sync.inFlight = true; sync.busy = opts.label || "Loading roster…";
+    clearTimeout(sync.slowTimer);
+    if(opts.initial){
+      sync.fbShown = false;
+      sync.slowTimer = setTimeout(function(){
+        if(!sync.inFlight) return;
+        markStale(); renderDb();
+        if(ovOpen()) ovFallback(true);
+      }, 8000);
+    }
+    renderDb();
     if(opts.overlay) ovShow(opts.title || "Loading from database", "Fetching the latest roster…");
     return apiGet().then(function(res){
-      sync.inFlight = false; sync.busy = null;
+      sync.inFlight = false; sync.busy = null; clearTimeout(sync.slowTimer);
       if(!res || !res.ok) throw new Error(res && res.error || "bad_response");
       sync.lastError = null;
       sync.remoteUpdatedAt = res.updatedAt;
@@ -3939,11 +4115,13 @@
         if(sync.key){
           dbLog("🆕", "Database is empty — tap Save to publish this roster");
           sync.dirty = true; syncSaveMeta();
+          staleResolved(false, 0, false);
           renderDb();
           if(opts.overlay) ovSuccess("Connected", "The database is empty. Tap Save to publish this roster to everyone.");
           return true;
         }
         dbLog("ℹ️", "Database is empty");
+        staleResolved(false, 0, false);
         renderDb();
         if(opts.overlay) ovSuccess("Connected", "The database is empty. Unlock editing to publish a roster.");
         return true;
@@ -3954,17 +4132,22 @@
           sync.remoteNewer = true;
           sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
           dbLog("ℹ️", "Newer version " + res.version + " in database — kept your unsaved changes");
+          staleResolved(false, res.version, false);
+          if(sync.doneMsg) sync.doneMsg = { title:"Connected · newer roster available", sub:"Your unsaved changes are kept — Save or Reload when ready" };
           renderDb();
           if(opts.overlay) ovSuccess("Newer version available", "Someone saved version " + res.version + ". Your unsaved changes are kept — Save will ask how to resolve, or use Reload to discard yours.");
           else showToast("ℹ️ A newer roster is in the database. Save or Reload when ready.");
           return true;
         }
         var hadLocal = sync.pendingLocal;
+        var wasStale = sync.stale;
         applyRemote(res.data, res.version, res.updatedAt);
-        if(changed && !opts.overlay && !opts.initial) showToast("🔄 Roster updated from the database" + (hadLocal ? " — your local edits were replaced" : ""));
+        staleResolved(changed, res.version, hadLocal);
+        if(changed && !opts.overlay && !opts.initial && !wasStale) showToast("🔄 Roster updated from the database" + (hadLocal ? " — your local edits were replaced" : ""));
         dbLog("⬇️", changed ? "Loaded version " + res.version : "Reloaded version " + res.version);
       } else {
         dbLog("✔️", "Already up to date (v" + res.version + ")");
+        staleResolved(false, res.version, false);
       }
       sync.lastSig = sync.pendingLocal ? sync.lastSig : stateSig();
       sync.lastSyncAt = new Date().toISOString(); syncSaveMeta();
@@ -3972,12 +4155,16 @@
       if(opts.overlay) ovSuccess(changed || opts.force ? "Roster loaded" : "Already up to date", "Version " + res.version + " · last changed " + fmtAgo(res.updatedAt));
       return true;
     }).catch(function(err){
-      sync.inFlight = false; sync.busy = null;
+      sync.inFlight = false; sync.busy = null; clearTimeout(sync.slowTimer);
       sync.lastError = "network";
-      dbLog("⚠️", "Couldn't load from database");
+      dbLog("⚠️", "Couldn't load from database" + (err && err.message === "timeout" ? " (timed out)" : ""));
+      markStale();
+      scheduleRetry();
       renderDb();
-      if(opts.overlay){
-        ovError("Couldn't reach database", netErrorText(err) + " You can keep working with the data saved on this device.", [
+      if(opts.initial){
+        if(!sync.fbShown && ovOpen()) ovFallback(false);
+      } else if(opts.overlay){
+        ovError("Couldn't reach database", netErrorText(err) + " You can keep working with the data saved on this device — we'll keep retrying in the background.", [
           { label:"Work offline", cls:"btn-secondary" },
           { label:"Retry", cls:"btn-primary", fn:function(){ dbLoad(opts); } }
         ]);
@@ -4006,6 +4193,7 @@
         sync.lastSyncAt = new Date().toISOString();
         syncSaveMeta();
         dbLog("💾", "Saved version " + res.version);
+        staleResolved(false, res.version, false);
         renderDb();
         if(opts.overlay) ovSuccess("All changes saved", "Everyone now sees version " + res.version + ".");
         else showToast("✓ Saved to database");
